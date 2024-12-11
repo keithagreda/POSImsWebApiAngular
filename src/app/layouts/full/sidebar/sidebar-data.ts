@@ -10,8 +10,13 @@ export const navItems: NavItem[] = [
     route: '/dashboard',
   },
   {
+    displayName: 'Products',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/products',
+  },
+  {
     navCap: 'Ui Components',
-    divider: true
+    divider: true,
   },
   {
     displayName: 'Badge',
@@ -50,7 +55,7 @@ export const navItems: NavItem[] = [
   },
   {
     navCap: 'Auth',
-    divider: true
+    divider: true,
   },
   {
     displayName: 'Login',
@@ -64,7 +69,7 @@ export const navItems: NavItem[] = [
   },
   {
     navCap: 'Extra',
-    divider: true
+    divider: true,
   },
   {
     displayName: 'Icons',

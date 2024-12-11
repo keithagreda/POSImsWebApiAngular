@@ -22,3 +22,17 @@
     <app-blog-card></app-blog-card>
   </div>
 </div>
+
+<button class="rounded-full" (click)="onShow()">show</button>
+
+<p-dialog
+  header="Header"
+  [(visible)]="visible"
+  [modal]="true"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <p class="text-red-500">Lorem ipsum dolor sit amet...</p>
+</p-dialog>

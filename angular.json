@@ -17,7 +17,11 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "allowedCommonJsDependencies": ["apexcharts", "bezier-easing", "moment"],
+            "allowedCommonJsDependencies": [
+              "apexcharts",
+              "bezier-easing",
+              "moment"
+            ],
             "outputPath": "dist/Matdash",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -27,7 +31,10 @@
             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/styles.scss",
-              "src/assets/scss/style.scss"
+              "src/assets/scss/style.scss",
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+              "node_modules/primeng/resources/primeng.min.css"
             ],
             "scripts": []
           },

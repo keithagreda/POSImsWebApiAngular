@@ -18,6 +18,13 @@ export const routes: Routes = [
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       },
       {
+        path: 'products',
+        loadChildren: () =>
+          import('./pages/products/product.routes').then(
+            (m) => m.ProductsRoutes
+          ),
+      },
+      {
         path: 'ui-components',
         loadChildren: () =>
           import('./pages/ui-components/ui-components.routes').then(
