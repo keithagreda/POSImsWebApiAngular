@@ -10,9 +10,9 @@
   (onHide)="closeForm()"
 >
   <div class="sm:container sm:mt-5">
-    <!-- <form
+    <form
       *ngIf="visible"
-      [formGroup]="productCreationForm"
+      [formGroup]="createProductForm"
       (ngSubmit)="onSubmit()"
     >
       <div class="border-b border-gray-900/10 pb-12">
@@ -33,12 +33,12 @@
             </div>
             <div
               *ngIf="
-                productCreationForm.get('name')?.invalid &&
-                productCreationForm.get('name')?.touched
+                createProductForm.get('name')?.invalid &&
+                createProductForm.get('name')?.touched
               "
             >
               <small
-                *ngIf="productCreationForm.get('name')?.errors?.['required']"
+                *ngIf="createProductForm.get('name')?.errors?.['required']"
                 class="text-red-500 text-sm"
               >
                 Name is required.
@@ -62,12 +62,12 @@
               />
               <div
                 *ngIf="
-                  productCreationForm.get('daysTillExpiration')?.invalid &&
-                  productCreationForm.get('daysTillExpiration')?.touched
+                  createProductForm.get('daysTillExpiration')?.invalid &&
+                  createProductForm.get('daysTillExpiration')?.touched
                 "
               >
                 <small
-                  *ngIf="productCreationForm.get('daysTillExpiration')?.errors?.['required']"
+                  *ngIf="createProductForm.get('daysTillExpiration')?.errors?.['required']"
                   class="text-red-500 text-sm"
                 >
                   Days till expiration is required.
@@ -90,12 +90,12 @@
               />
               <div
                 *ngIf="
-                  productCreationForm.get('price')?.invalid &&
-                  productCreationForm.get('price')?.touched
+                  createProductForm.get('price')?.invalid &&
+                  createProductForm.get('price')?.touched
                 "
               >
                 <small
-                  *ngIf="productCreationForm.get('price')?.errors?.['required']"
+                  *ngIf="createProductForm.get('price')?.errors?.['required']"
                   class="text-red-500 text-sm"
                 >
                   Price is required.
@@ -103,7 +103,7 @@
               </div>
             </div>
 
-            <div class="mt-2">
+            <!-- <div class="mt-2">
               <input
                 type="number"
                 name="price"
@@ -114,24 +114,24 @@
               />
               <div
                 *ngIf="
-                  productCreationForm.get('price')?.invalid &&
-                  productCreationForm.get('price')?.touched
+                  createProductForm.get('price')?.invalid &&
+                  createProductForm.get('price')?.touched
                 "
               >
                 <small
-                  *ngIf="productCreationForm.get('price')?.errors?.['required']"
+                  *ngIf="createProductForm.get('price')?.errors?.['required']"
                   class="text-red-500 text-sm"
                 >
                   Price is required.
                 </small>
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
       <button type="submit" mat-flat-button color="primary" class="m-t-4">
         Submit
       </button>
-    </form> -->
+    </form>
   </div>
 </p-dialog>

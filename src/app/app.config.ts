@@ -28,11 +28,15 @@ import { MaterialModule } from './material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
-import { ProductService } from './services/nswag/nswag.service';
+import {
+  ProductCategoryService,
+  ProductService,
+} from './services/nswag/nswag.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     ProductService,
+    ProductCategoryService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,

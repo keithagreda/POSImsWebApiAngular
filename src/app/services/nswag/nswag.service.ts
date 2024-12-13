@@ -23,7 +23,7 @@ export class InventoryService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:44364";
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
     getCurrentStocks(): Observable<FileResponse> {
@@ -143,7 +143,7 @@ export class ProductCategoryService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:44364";
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
     getProductCategory(): Observable<ApiResponseOfIListOfProductCategoryDto> {
@@ -255,7 +255,7 @@ export class ProductService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:44364";
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
     createProduct(input: CreateProductDto): Observable<ApiResponseOfString> {
@@ -460,6 +460,57 @@ export class ProductService {
         }
         return _observableOf(null as any);
     }
+
+    getProductForEdit(id: number): Observable<ApiResponseOfCreateProductDto> {
+        let url_ = this.baseUrl + "/api/Product/GetProductForEdit/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductForEdit(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfCreateProductDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfCreateProductDto>;
+        }));
+    }
+
+    protected processGetProductForEdit(response: HttpResponseBase): Observable<ApiResponseOfCreateProductDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfCreateProductDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 @Injectable()
@@ -470,7 +521,7 @@ export class SalesService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:44364";
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
     createSalesFromTransNum(input: CreateOrEditSalesDto): Observable<FileResponse> {
@@ -594,7 +645,7 @@ export class StocksService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:44364";
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
     receiveStocks(input: CreateStocksReceivingDto): Observable<FileResponse> {
@@ -662,7 +713,7 @@ export class StorageLocationService {
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
-        this.baseUrl = baseUrl ?? "https://localhost:44364";
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
     createStorageLocation(input: CreateOrEditStorageLocationDto): Observable<FileResponse> {
@@ -990,7 +1041,7 @@ export class CreateProductDto implements ICreateProductDto {
     name?: string;
     daysTillExpiration?: number;
     price?: number;
-    productCategoryId?: number;
+    productCategories?: ProductCategoryDto[];
 
     constructor(data?: ICreateProductDto) {
         if (data) {
@@ -1006,7 +1057,14 @@ export class CreateProductDto implements ICreateProductDto {
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.daysTillExpiration = _data["daysTillExpiration"] !== undefined ? _data["daysTillExpiration"] : <any>null;
             this.price = _data["price"] !== undefined ? _data["price"] : <any>null;
-            this.productCategoryId = _data["productCategoryId"] !== undefined ? _data["productCategoryId"] : <any>null;
+            if (Array.isArray(_data["productCategories"])) {
+                this.productCategories = [] as any;
+                for (let item of _data["productCategories"])
+                    this.productCategories!.push(ProductCategoryDto.fromJS(item));
+            }
+            else {
+                this.productCategories = <any>null;
+            }
         }
     }
 
@@ -1022,7 +1080,11 @@ export class CreateProductDto implements ICreateProductDto {
         data["name"] = this.name !== undefined ? this.name : <any>null;
         data["daysTillExpiration"] = this.daysTillExpiration !== undefined ? this.daysTillExpiration : <any>null;
         data["price"] = this.price !== undefined ? this.price : <any>null;
-        data["productCategoryId"] = this.productCategoryId !== undefined ? this.productCategoryId : <any>null;
+        if (Array.isArray(this.productCategories)) {
+            data["productCategories"] = [];
+            for (let item of this.productCategories)
+                data["productCategories"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -1031,7 +1093,7 @@ export interface ICreateProductDto {
     name?: string;
     daysTillExpiration?: number;
     price?: number;
-    productCategoryId?: number;
+    productCategories?: ProductCategoryDto[];
 }
 
 export class ApiResponseOfIListOfProductDto implements IApiResponseOfIListOfProductDto {
@@ -1285,6 +1347,68 @@ export interface IProductWithCategDto {
     productId?: number;
     productName?: string;
     productCategories?: string[];
+}
+
+export class ApiResponseOfCreateProductDto implements IApiResponseOfCreateProductDto {
+    data!: CreateProductDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfCreateProductDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new CreateProductDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? CreateProductDto.fromJS(_data["data"]) : new CreateProductDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfCreateProductDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfCreateProductDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfCreateProductDto {
+    data: CreateProductDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
 }
 
 export class CreateOrEditSalesDto implements ICreateOrEditSalesDto {
