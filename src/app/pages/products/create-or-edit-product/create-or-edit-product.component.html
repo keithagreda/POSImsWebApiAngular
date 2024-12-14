@@ -15,95 +15,134 @@
       [formGroup]="createProductForm"
       (ngSubmit)="onSubmit()"
     >
-      <div class="border-b border-gray-900/10 pb-12">
-        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-          <div class="sm:col-span-3">
-            <label for="name" class="block text-sm font-medium text-gray-900"
-              >Name</label
-            >
-            <div class="mt-2">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                autocomplete="given-name"
-                formControlName="name"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-              />
-            </div>
-            <div
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Name</mat-label>
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <input
+              matInput
+              name="name"
+              id="name"
+              formControlName="name"
+              placeholder="Name"
+            />
+            <mat-error
               *ngIf="
-                createProductForm.get('name')?.invalid &&
+                createProductForm.get('name')?.hasError('required') &&
                 createProductForm.get('name')?.touched
               "
             >
-              <small
-                *ngIf="createProductForm.get('name')?.errors?.['required']"
-                class="text-red-500 text-sm"
-              >
-                Name is required.
-              </small>
-            </div>
-          </div>
-          <div class="sm:col-span-3">
-            <label
-              for="daysTillExpiration"
-              class="block text-sm font-medium text-gray-900"
-              >Days till expiration</label
+              Name is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block"
+            >Days till expiration</mat-label
+          >
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <input
+              matInput
+              name="daysTillExpiration"
+              id="daysTillExpiration"
+              formControlName="daysTillExpiration"
+              placeholder="Number of days"
+              type="number"
+            />
+            <mat-error
+              *ngIf="
+                createProductForm
+                  .get('daysTillExpiration')
+                  ?.hasError('required') &&
+                createProductForm.get('daysTillExpiration')?.touched
+              "
             >
-            <div class="mt-2">
-              <input
-                type="number"
-                name="daysTillExpiration"
-                id="daysTillExpiration"
-                autocomplete="family-name"
-                formControlName="daysTillExpiration"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-              />
-              <div
-                *ngIf="
-                  createProductForm.get('daysTillExpiration')?.invalid &&
-                  createProductForm.get('daysTillExpiration')?.touched
-                "
-              >
-                <small
-                  *ngIf="createProductForm.get('daysTillExpiration')?.errors?.['required']"
-                  class="text-red-500 text-sm"
-                >
-                  Days till expiration is required.
-                </small>
-              </div>
-            </div>
-          </div>
-          <div class="sm:col-span-3">
-            <label for="price" class="block text-sm font-medium text-gray-900"
-              >Price</label
+              Days till expiration is required.
+            </mat-error>
+            <mat-error
+              *ngIf="
+                createProductForm.get('daysTillExpiration')?.hasError('min') &&
+                createProductForm.get('daysTillExpiration')?.touched
+              "
             >
-            <div class="mt-2">
-              <input
-                type="number"
-                name="price"
-                id="price"
-                autocomplete="family-name"
-                formControlName="price"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+              Must be at least 1 day.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Price</mat-label>
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <input
+              matInput
+              name="price"
+              id="price"
+              formControlName="price"
+              placeholder="Price"
+              type="number"
+            />
+            <mat-error
+              *ngIf="
+                createProductForm.get('price')?.hasError('required') &&
+                createProductForm.get('price')?.touched
+              "
+            >
+              Price is required.
+            </mat-error>
+            <mat-error
+              *ngIf="
+                createProductForm.get('price')?.hasError('min') &&
+                createProductForm.get('price')?.touched
+              "
+            >
+              Price must be greater than 0.
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Category</mat-label>
+          <div class="card flex justify-content-center">
+            <form class="w-100" [formGroup]="createProductForm">
+              <p-dropdown
+                styleClass="w-100"
+                formControlName="categories"
+                [options]="productCategories"
+                optionLabel="name"
+                placeholder="Select a Category"
               />
-              <div
-                *ngIf="
-                  createProductForm.get('price')?.invalid &&
-                  createProductForm.get('price')?.touched
-                "
+            </form>
+          </div>
+        </div>
+      </div>
+      
+      <!-- <div formArrayName="categories">
+          <mat-label class="f-w-600 m-b-8 d-block">Category</mat-label>
+          {{productCategories | json}}
+          <div *ngFor="let item of categories.controls; let i = index" [formGroupName]="i">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-select
+                formControlName="id"
+                placeholder="Select a category"
               >
-                <small
-                  *ngIf="createProductForm.get('price')?.errors?.['required']"
-                  class="text-red-500 text-sm"
+                @for (item of productCategories; track item.id) {
+                  <mat-option [value]="item.id">{{
+                    item.name
+                  }}</mat-option>
+                }
+                <mat-option
+                  *ngFor="let option of productCategories; trackBy: trackByCategoryId"
+                  [value]="option.id"
                 >
-                  Price is required.
-                </small>
-              </div>
-            </div>
+                  {{ option.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div> -->
+      <!-- <button mat-button color="primary" type="button" (click)="addCategory()">
+          Add Category
+        </button> -->
 
-            <!-- <div class="mt-2">
+      <!-- <div class="mt-2">
               <input
                 type="number"
                 name="price"
@@ -126,10 +165,13 @@
                 </small>
               </div>
             </div> -->
-          </div>
-        </div>
-      </div>
-      <button type="submit" mat-flat-button color="primary" class="m-t-4">
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        class="m-t-4"
+        [disabled]="!createProductForm.valid"
+      >
         Submit
       </button>
     </form>

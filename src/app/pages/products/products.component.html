@@ -1,6 +1,11 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
-    <mat-card-title>Table</mat-card-title>
+    <div class="product-header">
+      <mat-card-title>Table</mat-card-title>
+      <button  (click)="showCreateModal()" mat-flat-button color="primary" class="m-r-8">Add</button>
+      
+      </div>
+    
 
     <div class="table-responsive">
       <table mat-table [dataSource]="products" class="w-100">
@@ -90,12 +95,8 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button (click)="showCreateModal()" mat-menu-item>
-                <mat-icon>add</mat-icon>
-                <span>Add</span>
-              </button>
-              <button mat-menu-item>
-                <mat-icon>edit</mat-icon>
+              <button  (click)="showCreateModal(element.id)" mat-menu-item>
+                <mat-icon  >edit</mat-icon>
                 <span>Edit</span>
               </button>
               <button mat-menu-item>
@@ -112,4 +113,4 @@
     </div>
   </mat-card-content>
 </mat-card>
-<app-create-or-edit-product></app-create-or-edit-product>
+<app-create-or-edit-product (modalSave)="getProducts()" ></app-create-or-edit-product>

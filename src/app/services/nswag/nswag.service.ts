@@ -940,7 +940,7 @@ export interface IApiResponseOfIListOfProductCategoryDto {
 
 export class ProductCategoryDto implements IProductCategoryDto {
     id?: number;
-    name?: string;
+    name?: string | null;
 
     constructor(data?: IProductCategoryDto) {
         if (data) {
@@ -975,7 +975,7 @@ export class ProductCategoryDto implements IProductCategoryDto {
 
 export interface IProductCategoryDto {
     id?: number;
-    name?: string;
+    name?: string | null;
 }
 
 export class ApiResponseOfString implements IApiResponseOfString {

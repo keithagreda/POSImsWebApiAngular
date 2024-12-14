@@ -62,7 +62,7 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  showCreateModal() {
-    this.createOrEditProductComponent.show();
+  showCreateModal(id?: number) {
+    this.createOrEditProductComponent.show(id);
   }
 }
