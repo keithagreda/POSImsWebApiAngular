@@ -25,6 +25,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'stocks-receiving',
+        loadChildren: () =>
+          import('./pages/stocks-receiving/stocks-receiving.routes').then(
+            (m) => m.StocksReceivingRoutes
+          ),
+      },
+      {
         path: 'ui-components',
         loadChildren: () =>
           import('./pages/ui-components/ui-components.routes').then(

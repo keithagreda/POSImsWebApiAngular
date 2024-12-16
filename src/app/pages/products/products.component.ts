@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogModule } from 'primeng/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import {
-  ProductDto,
+  ProductV1Dto,
   ProductService,
 } from 'src/app/services/nswag/nswag.service';
 import { CreateOrEditProductComponent } from './create-or-edit-product/create-or-edit-product.component';
@@ -29,10 +29,11 @@ export class ProductsComponent implements OnInit {
     'name',
     'price',
     'daysTillExpiration',
+    'category',
     'action',
   ];
   visible = false;
-  products: ProductDto[] = [];
+  products: ProductV1Dto[] = [];
   constructor(
     private _productService: ProductService,
     private _toastr: ToastrService

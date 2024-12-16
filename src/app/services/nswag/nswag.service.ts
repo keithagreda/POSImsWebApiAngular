@@ -310,7 +310,7 @@ export class ProductService {
         return _observableOf(null as any);
     }
 
-    getProducts(): Observable<ApiResponseOfIListOfProductDto> {
+    getProducts(): Observable<ApiResponseOfIListOfProductV1Dto> {
         let url_ = this.baseUrl + "/api/Product/GetProducts";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -329,14 +329,14 @@ export class ProductService {
                 try {
                     return this.processGetProducts(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ApiResponseOfIListOfProductDto>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfIListOfProductV1Dto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ApiResponseOfIListOfProductDto>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfIListOfProductV1Dto>;
         }));
     }
 
-    protected processGetProducts(response: HttpResponseBase): Observable<ApiResponseOfIListOfProductDto> {
+    protected processGetProducts(response: HttpResponseBase): Observable<ApiResponseOfIListOfProductV1Dto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -347,7 +347,7 @@ export class ProductService {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ApiResponseOfIListOfProductDto.fromJS(resultData200);
+            result200 = ApiResponseOfIListOfProductV1Dto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -511,6 +511,60 @@ export class ProductService {
         }
         return _observableOf(null as any);
     }
+
+    getProductDropDownTable(filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableDto> {
+        let url_ = this.baseUrl + "/api/Product/GetProductsForDropDown?";
+        if (filterText !== undefined && filterText !== null)
+            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
+        if (pageNumber !== undefined && pageNumber !== null)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize !== undefined && pageSize !== null)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductDropDownTable(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductDropDownTable(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableDto>;
+        }));
+    }
+
+    protected processGetProductDropDownTable(response: HttpResponseBase): Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfPaginatedResultOfGetProductDropDownTableDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 @Injectable()
@@ -648,7 +702,7 @@ export class StocksService {
         this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
-    receiveStocks(input: CreateStocksReceivingDto): Observable<FileResponse> {
+    receiveStocks(input: CreateStocksReceivingDto): Observable<ApiResponseOfString> {
         let url_ = this.baseUrl + "/api/Stocks/ReceiveStocks";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -660,7 +714,7 @@ export class StocksService {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -671,31 +725,75 @@ export class StocksService {
                 try {
                     return this.processReceiveStocks(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfString>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfString>;
         }));
     }
 
-    protected processReceiveStocks(response: HttpResponseBase): Observable<FileResponse> {
+    protected processReceiveStocks(response: HttpResponseBase): Observable<ApiResponseOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfString.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getReceiveStocks(): Observable<ApiResponseOfListOfGetAllStocksReceivingDto> {
+        let url_ = this.baseUrl + "/api/Stocks/GetReceivingStocks";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetReceiveStocks(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetReceiveStocks(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfListOfGetAllStocksReceivingDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfListOfGetAllStocksReceivingDto>;
+        }));
+    }
+
+    protected processGetReceiveStocks(response: HttpResponseBase): Observable<ApiResponseOfListOfGetAllStocksReceivingDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfListOfGetAllStocksReceivingDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -772,7 +870,7 @@ export class StorageLocationService {
         return _observableOf(null as any);
     }
 
-    getAllStorageLocation(): Observable<FileResponse> {
+    getAllStorageLocation(): Observable<ApiResponseOfListOfGetStorageLocationForDropDownDto> {
         let url_ = this.baseUrl + "/api/StorageLocation/GetAllStorageLocation";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -780,7 +878,7 @@ export class StorageLocationService {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -791,31 +889,27 @@ export class StorageLocationService {
                 try {
                     return this.processGetAllStorageLocation(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfListOfGetStorageLocationForDropDownDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfListOfGetStorageLocationForDropDownDto>;
         }));
     }
 
-    protected processGetAllStorageLocation(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetAllStorageLocation(response: HttpResponseBase): Observable<ApiResponseOfListOfGetStorageLocationForDropDownDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfListOfGetStorageLocationForDropDownDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -1096,13 +1190,13 @@ export interface ICreateProductDto {
     productCategories?: ProductCategoryDto[];
 }
 
-export class ApiResponseOfIListOfProductDto implements IApiResponseOfIListOfProductDto {
-    data!: ProductDto[];
+export class ApiResponseOfIListOfProductV1Dto implements IApiResponseOfIListOfProductV1Dto {
+    data!: ProductV1Dto[];
     message?: string;
     isSuccess?: boolean;
     errors?: string[];
 
-    constructor(data?: IApiResponseOfIListOfProductDto) {
+    constructor(data?: IApiResponseOfIListOfProductV1Dto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1119,7 +1213,7 @@ export class ApiResponseOfIListOfProductDto implements IApiResponseOfIListOfProd
             if (Array.isArray(_data["data"])) {
                 this.data = [] as any;
                 for (let item of _data["data"])
-                    this.data!.push(ProductDto.fromJS(item));
+                    this.data!.push(ProductV1Dto.fromJS(item));
             }
             else {
                 this.data = <any>null;
@@ -1137,9 +1231,9 @@ export class ApiResponseOfIListOfProductDto implements IApiResponseOfIListOfProd
         }
     }
 
-    static fromJS(data: any): ApiResponseOfIListOfProductDto {
+    static fromJS(data: any): ApiResponseOfIListOfProductV1Dto {
         data = typeof data === 'object' ? data : {};
-        let result = new ApiResponseOfIListOfProductDto();
+        let result = new ApiResponseOfIListOfProductV1Dto();
         result.init(data);
         return result;
     }
@@ -1162,21 +1256,22 @@ export class ApiResponseOfIListOfProductDto implements IApiResponseOfIListOfProd
     }
 }
 
-export interface IApiResponseOfIListOfProductDto {
-    data: ProductDto[];
+export interface IApiResponseOfIListOfProductV1Dto {
+    data: ProductV1Dto[];
     message?: string;
     isSuccess?: boolean;
     errors?: string[];
 }
 
-export class ProductDto implements IProductDto {
+export class ProductV1Dto implements IProductV1Dto {
     id?: number;
     name?: string;
     price?: number;
     prodCode?: string;
     daysTillExpiration?: number;
+    productCategoriesDto?: ProductCategoryDto[];
 
-    constructor(data?: IProductDto) {
+    constructor(data?: IProductV1Dto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -1192,12 +1287,20 @@ export class ProductDto implements IProductDto {
             this.price = _data["price"] !== undefined ? _data["price"] : <any>null;
             this.prodCode = _data["prodCode"] !== undefined ? _data["prodCode"] : <any>null;
             this.daysTillExpiration = _data["daysTillExpiration"] !== undefined ? _data["daysTillExpiration"] : <any>null;
+            if (Array.isArray(_data["productCategoriesDto"])) {
+                this.productCategoriesDto = [] as any;
+                for (let item of _data["productCategoriesDto"])
+                    this.productCategoriesDto!.push(ProductCategoryDto.fromJS(item));
+            }
+            else {
+                this.productCategoriesDto = <any>null;
+            }
         }
     }
 
-    static fromJS(data: any): ProductDto {
+    static fromJS(data: any): ProductV1Dto {
         data = typeof data === 'object' ? data : {};
-        let result = new ProductDto();
+        let result = new ProductV1Dto();
         result.init(data);
         return result;
     }
@@ -1209,16 +1312,22 @@ export class ProductDto implements IProductDto {
         data["price"] = this.price !== undefined ? this.price : <any>null;
         data["prodCode"] = this.prodCode !== undefined ? this.prodCode : <any>null;
         data["daysTillExpiration"] = this.daysTillExpiration !== undefined ? this.daysTillExpiration : <any>null;
+        if (Array.isArray(this.productCategoriesDto)) {
+            data["productCategoriesDto"] = [];
+            for (let item of this.productCategoriesDto)
+                data["productCategoriesDto"].push(item.toJSON());
+        }
         return data;
     }
 }
 
-export interface IProductDto {
+export interface IProductV1Dto {
     id?: number;
     name?: string;
     price?: number;
     prodCode?: string;
     daysTillExpiration?: number;
+    productCategoriesDto?: ProductCategoryDto[];
 }
 
 export class ApiResponseOfIListOfProductWithCategDto implements IApiResponseOfIListOfProductWithCategDto {
@@ -1409,6 +1518,171 @@ export interface IApiResponseOfCreateProductDto {
     message?: string;
     isSuccess?: boolean;
     errors?: string[];
+}
+
+export class ApiResponseOfPaginatedResultOfGetProductDropDownTableDto implements IApiResponseOfPaginatedResultOfGetProductDropDownTableDto {
+    data!: PaginatedResultOfGetProductDropDownTableDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfPaginatedResultOfGetProductDropDownTableDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new PaginatedResultOfGetProductDropDownTableDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? PaginatedResultOfGetProductDropDownTableDto.fromJS(_data["data"]) : new PaginatedResultOfGetProductDropDownTableDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfPaginatedResultOfGetProductDropDownTableDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfPaginatedResultOfGetProductDropDownTableDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfPaginatedResultOfGetProductDropDownTableDto {
+    data: PaginatedResultOfGetProductDropDownTableDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PaginatedResultOfGetProductDropDownTableDto implements IPaginatedResultOfGetProductDropDownTableDto {
+    items?: GetProductDropDownTableDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+
+    constructor(data?: IPaginatedResultOfGetProductDropDownTableDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(GetProductDropDownTableDto.fromJS(item));
+            }
+            else {
+                this.items = <any>null;
+            }
+            this.totalCount = _data["totalCount"] !== undefined ? _data["totalCount"] : <any>null;
+            this.totalPages = _data["totalPages"] !== undefined ? _data["totalPages"] : <any>null;
+            this.currentPage = _data["currentPage"] !== undefined ? _data["currentPage"] : <any>null;
+            this.pageSize = _data["pageSize"] !== undefined ? _data["pageSize"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PaginatedResultOfGetProductDropDownTableDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResultOfGetProductDropDownTableDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount !== undefined ? this.totalCount : <any>null;
+        data["totalPages"] = this.totalPages !== undefined ? this.totalPages : <any>null;
+        data["currentPage"] = this.currentPage !== undefined ? this.currentPage : <any>null;
+        data["pageSize"] = this.pageSize !== undefined ? this.pageSize : <any>null;
+        return data;
+    }
+}
+
+export interface IPaginatedResultOfGetProductDropDownTableDto {
+    items?: GetProductDropDownTableDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+}
+
+export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
+    id?: number;
+    name?: string;
+
+    constructor(data?: IGetProductDropDownTableDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetProductDropDownTableDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetProductDropDownTableDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        return data;
+    }
+}
+
+export interface IGetProductDropDownTableDto {
+    id?: number;
+    name?: string;
 }
 
 export class CreateOrEditSalesDto implements ICreateOrEditSalesDto {
@@ -1608,6 +1882,143 @@ export interface ICreateStocksReceivingDto {
     storageLocationId: number;
 }
 
+export class ApiResponseOfListOfGetAllStocksReceivingDto implements IApiResponseOfListOfGetAllStocksReceivingDto {
+    data!: GetAllStocksReceivingDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfListOfGetAllStocksReceivingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(GetAllStocksReceivingDto.fromJS(item));
+            }
+            else {
+                this.data = <any>null;
+            }
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfListOfGetAllStocksReceivingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfListOfGetAllStocksReceivingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfListOfGetAllStocksReceivingDto {
+    data: GetAllStocksReceivingDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class GetAllStocksReceivingDto implements IGetAllStocksReceivingDto {
+    id?: string;
+    productId?: number;
+    transNum?: string;
+    productName?: string;
+    storageLocation?: string;
+    quantity?: number;
+    storageLocationId?: number;
+    dateReceived?: string;
+
+    constructor(data?: IGetAllStocksReceivingDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.productId = _data["productId"] !== undefined ? _data["productId"] : <any>null;
+            this.transNum = _data["transNum"] !== undefined ? _data["transNum"] : <any>null;
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
+            this.storageLocation = _data["storageLocation"] !== undefined ? _data["storageLocation"] : <any>null;
+            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.storageLocationId = _data["storageLocationId"] !== undefined ? _data["storageLocationId"] : <any>null;
+            this.dateReceived = _data["dateReceived"] !== undefined ? _data["dateReceived"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetAllStocksReceivingDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetAllStocksReceivingDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["productId"] = this.productId !== undefined ? this.productId : <any>null;
+        data["transNum"] = this.transNum !== undefined ? this.transNum : <any>null;
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
+        data["storageLocation"] = this.storageLocation !== undefined ? this.storageLocation : <any>null;
+        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["storageLocationId"] = this.storageLocationId !== undefined ? this.storageLocationId : <any>null;
+        data["dateReceived"] = this.dateReceived !== undefined ? this.dateReceived : <any>null;
+        return data;
+    }
+}
+
+export interface IGetAllStocksReceivingDto {
+    id?: string;
+    productId?: number;
+    transNum?: string;
+    productName?: string;
+    storageLocation?: string;
+    quantity?: number;
+    storageLocationId?: number;
+    dateReceived?: string;
+}
+
 export class CreateOrEditStorageLocationDto implements ICreateOrEditStorageLocationDto {
     id?: number | null;
     name?: string;
@@ -1650,6 +2061,119 @@ export interface ICreateOrEditStorageLocationDto {
     id?: number | null;
     name?: string;
     description?: string;
+}
+
+export class ApiResponseOfListOfGetStorageLocationForDropDownDto implements IApiResponseOfListOfGetStorageLocationForDropDownDto {
+    data!: GetStorageLocationForDropDownDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfListOfGetStorageLocationForDropDownDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(GetStorageLocationForDropDownDto.fromJS(item));
+            }
+            else {
+                this.data = <any>null;
+            }
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfListOfGetStorageLocationForDropDownDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfListOfGetStorageLocationForDropDownDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfListOfGetStorageLocationForDropDownDto {
+    data: GetStorageLocationForDropDownDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class GetStorageLocationForDropDownDto implements IGetStorageLocationForDropDownDto {
+    id?: number;
+    name?: string;
+
+    constructor(data?: IGetStorageLocationForDropDownDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetStorageLocationForDropDownDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetStorageLocationForDropDownDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        return data;
+    }
+}
+
+export interface IGetStorageLocationForDropDownDto {
+    id?: number;
+    name?: string;
 }
 
 export interface FileResponse {

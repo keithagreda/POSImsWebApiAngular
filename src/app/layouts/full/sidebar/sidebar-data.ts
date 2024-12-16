@@ -15,6 +15,11 @@ export const navItems: NavItem[] = [
     route: '/products',
   },
   {
+    displayName: 'Stocks Receiving',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/stocks-receiving',
+  },
+  {
     navCap: 'Ui Components',
     divider: true,
   },

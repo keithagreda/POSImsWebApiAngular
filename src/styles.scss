@@ -1,6 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
 /* You can add global styles to this file, and also import other style files */
 
 html,
@@ -10,4 +7,17 @@ body {
 body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.p-autocomplete-dropdown {
+  border: 1px solid #d1d5db; // Match border color
+  border-radius: 4px;
+  background-color: #f9fafb; // Light background
+  box-shadow: none;
+  background-color: transparent;
+}
+
+.k-header {
+  display: flex;
+  justify-content: space-between;
 }
