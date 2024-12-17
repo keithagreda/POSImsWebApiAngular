@@ -10,9 +10,19 @@ export const navItems: NavItem[] = [
     route: '/dashboard',
   },
   {
+    displayName: 'Sales',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/sales',
+  },
+  {
     displayName: 'Products',
     iconName: 'solar:widget-add-line-duotone',
     route: '/products',
+  },
+  {
+    displayName: 'Test',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/test',
   },
   {
     displayName: 'Stocks Receiving',

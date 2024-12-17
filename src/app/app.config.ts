@@ -31,6 +31,7 @@ import { provideToastr } from 'ngx-toastr';
 import {
   ProductCategoryService,
   ProductService,
+  SalesService,
   StocksService,
   StorageLocationService,
 } from './services/nswag/nswag.service';
@@ -41,6 +42,7 @@ export const appConfig: ApplicationConfig = {
     ProductCategoryService,
     StocksService,
     StorageLocationService,
+    SalesService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,

@@ -25,6 +25,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'test',
+        loadChildren: () =>
+          import('./pages/test-component/test.routes').then(
+            (m) => m.TestRoutes
+          ),
+      },
+      {
+        path: 'sales',
+        loadChildren: () =>
+          import('./pages/sales/sales.routes').then((m) => m.SalesRoutes),
+      },
+      {
         path: 'stocks-receiving',
         loadChildren: () =>
           import('./pages/stocks-receiving/stocks-receiving.routes').then(

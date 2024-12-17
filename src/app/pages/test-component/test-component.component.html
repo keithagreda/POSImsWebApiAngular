@@ -1,0 +1,16 @@
+<mat-card class="cardWithShadow">
+  <mat-card-content>
+    <div class="flex-container">
+      <ng-container *ngFor="let item of items">
+        <button
+          mat-flat-button
+          [ngStyle]="{ height: '150px', width: '150px' }"
+          color="primary"
+          class="m-r-8 flex-item"
+        >
+          {{ item.name }}
+        </button>
+      </ng-container>
+    </div>
+  </mat-card-content>
+</mat-card>

@@ -113,58 +113,58 @@
           </div>
         </div>
       </div>
-      
+
       <!-- <div formArrayName="categories">
-          <mat-label class="f-w-600 m-b-8 d-block">Category</mat-label>
-          {{productCategories | json}}
-          <div *ngFor="let item of categories.controls; let i = index" [formGroupName]="i">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-select
-                formControlName="id"
-                placeholder="Select a category"
+        <mat-label class="f-w-600 m-b-8 d-block">Category</mat-label>
+        {{productCategories | json}}
+        <div *ngFor="let item of categories.controls; let i = index" [formGroupName]="i">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-select
+              formControlName="id"
+              placeholder="Select a category"
+            >
+              @for (item of productCategories; track item.id) {
+                <mat-option [value]="item.id">{{
+                  item.name
+                }}</mat-option>
+              }
+              <mat-option
+                *ngFor="let option of productCategories; trackBy: trackByCategoryId"
+                [value]="option.id"
               >
-                @for (item of productCategories; track item.id) {
-                  <mat-option [value]="item.id">{{
-                    item.name
-                  }}</mat-option>
-                }
-                <mat-option
-                  *ngFor="let option of productCategories; trackBy: trackByCategoryId"
-                  [value]="option.id"
-                >
-                  {{ option.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-        </div> -->
+                {{ option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div> -->
       <!-- <button mat-button color="primary" type="button" (click)="addCategory()">
-          Add Category
-        </button> -->
+        Add Category
+      </button> -->
 
       <!-- <div class="mt-2">
-              <input
-                type="number"
-                name="price"
-                id="price"
-                autocomplete="family-name"
-                formControlName="price"
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-              />
-              <div
-                *ngIf="
-                  createProductForm.get('price')?.invalid &&
-                  createProductForm.get('price')?.touched
-                "
+            <input
+              type="number"
+              name="price"
+              id="price"
+              autocomplete="family-name"
+              formControlName="price"
+              class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+            />
+            <div
+              *ngIf="
+                createProductForm.get('price')?.invalid &&
+                createProductForm.get('price')?.touched
+              "
+            >
+              <small
+                *ngIf="createProductForm.get('price')?.errors?.['required']"
+                class="text-red-500 text-sm"
               >
-                <small
-                  *ngIf="createProductForm.get('price')?.errors?.['required']"
-                  class="text-red-500 text-sm"
-                >
-                  Price is required.
-                </small>
-              </div>
-            </div> -->
+                Price is required.
+              </small>
+            </div>
+          </div> -->
       <button
         type="submit"
         mat-flat-button

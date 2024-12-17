@@ -1,0 +1,67 @@
+<div class="sm:container sm:mt-5">
+  <form #createStocksReceiving="ngForm" (ngSubmit)="save()">
+    <div class="row">
+      <div class="col-lg-6">
+        <mat-label class="f-w-600 m-b-8 d-block">Product</mat-label>
+        <div class="card flex justify-content-center">
+          <p-autoComplete
+            styleClass="w-100 dropdown-style"
+            [(ngModel)]="selectedProduct"
+            [dropdown]="true"
+            [forceSelection]="true"
+            [suggestions]="products"
+            (completeMethod)="filterProduct($event)"
+            (onSelect)="onProductSelect()"
+            optionLabel="name"
+            placeholder="Select a product"
+          />
+          <!-- <p-dropdown
+              styleClass="w-100"
+              [(ngModel)]="selectedProduct"
+              name="product"
+              [options]="products"
+              optionLabel="name"
+              placeholder="Select a Product"
+              required
+            ></p-dropdown> -->
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <mat-label class="f-w-600 m-b-8 d-block">Quantity</mat-label>
+        <mat-form-field appearance="outline" class="w-100" color="primary">
+          <input
+            matInput
+            type="number"
+            name="quantity"
+            [(ngModel)]="createOrEditReceiveStocks.quantity"
+            placeholder="Quantity..."
+            required
+          />
+        </mat-form-field>
+      </div>
+      <div class="col-lg-6">
+        <mat-label class="f-w-600 m-b-8 d-block">Storage Location</mat-label>
+        <div class="card flex justify-content-center">
+          <p-dropdown
+            styleClass="w-100"
+            [(ngModel)]="selectedStorageLocation"
+            name="storageLocation"
+            [options]="storageLocations"
+            optionLabel="name"
+            placeholder="Select a Storage Location"
+            required
+          ></p-dropdown>
+        </div>
+      </div>
+    </div>
+    <button
+      type="submit"
+      mat-flat-button
+      color="primary"
+      class="m-t-4"
+      [disabled]="!createStocksReceiving.valid"
+    >
+      Submit
+    </button>
+  </form>
+</div>

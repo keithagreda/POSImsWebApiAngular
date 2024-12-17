@@ -578,7 +578,65 @@ export class SalesService {
         this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
-    createSalesFromTransNum(input: CreateOrEditSalesDto): Observable<FileResponse> {
+    getSales(transNum: string | null | undefined, minTransDate: Date | null | undefined, maxTransDate: Date | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfSalesHeaderDto> {
+        let url_ = this.baseUrl + "/api/Sales/GetSales?";
+        if (transNum !== undefined && transNum !== null)
+            url_ += "TransNum=" + encodeURIComponent("" + transNum) + "&";
+        if (minTransDate !== undefined && minTransDate !== null)
+            url_ += "MinTransDate=" + encodeURIComponent(minTransDate ? "" + minTransDate.toISOString() : "") + "&";
+        if (maxTransDate !== undefined && maxTransDate !== null)
+            url_ += "MaxTransDate=" + encodeURIComponent(maxTransDate ? "" + maxTransDate.toISOString() : "") + "&";
+        if (pageNumber !== undefined && pageNumber !== null)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize !== undefined && pageSize !== null)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSales(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSales(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfPaginatedResultOfSalesHeaderDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfPaginatedResultOfSalesHeaderDto>;
+        }));
+    }
+
+    protected processGetSales(response: HttpResponseBase): Observable<ApiResponseOfPaginatedResultOfSalesHeaderDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfPaginatedResultOfSalesHeaderDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    createSalesFromTransNum(input: CreateOrEditSalesDto): Observable<ApiResponseOfString> {
         let url_ = this.baseUrl + "/api/Sales/CreateSalesFromTransNum";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -590,7 +648,7 @@ export class SalesService {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -601,31 +659,27 @@ export class SalesService {
                 try {
                     return this.processCreateSalesFromTransNum(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfString>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfString>;
         }));
     }
 
-    protected processCreateSalesFromTransNum(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCreateSalesFromTransNum(response: HttpResponseBase): Observable<ApiResponseOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfString.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -634,7 +688,7 @@ export class SalesService {
         return _observableOf(null as any);
     }
 
-    createSales(input: CreateOrEditSalesDto): Observable<FileResponse> {
+    createSales(input: CreateOrEditSalesV1Dto): Observable<ApiResponseOfString> {
         let url_ = this.baseUrl + "/api/Sales/CreateSales";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -646,7 +700,7 @@ export class SalesService {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -657,31 +711,27 @@ export class SalesService {
                 try {
                     return this.processCreateSales(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfString>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfString>;
         }));
     }
 
-    protected processCreateSales(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCreateSales(response: HttpResponseBase): Observable<ApiResponseOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfString.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -1685,6 +1735,258 @@ export interface IGetProductDropDownTableDto {
     name?: string;
 }
 
+export class ApiResponseOfPaginatedResultOfSalesHeaderDto implements IApiResponseOfPaginatedResultOfSalesHeaderDto {
+    data!: PaginatedResultOfSalesHeaderDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfPaginatedResultOfSalesHeaderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new PaginatedResultOfSalesHeaderDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? PaginatedResultOfSalesHeaderDto.fromJS(_data["data"]) : new PaginatedResultOfSalesHeaderDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfPaginatedResultOfSalesHeaderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfPaginatedResultOfSalesHeaderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfPaginatedResultOfSalesHeaderDto {
+    data: PaginatedResultOfSalesHeaderDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PaginatedResultOfSalesHeaderDto implements IPaginatedResultOfSalesHeaderDto {
+    items?: SalesHeaderDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+
+    constructor(data?: IPaginatedResultOfSalesHeaderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SalesHeaderDto.fromJS(item));
+            }
+            else {
+                this.items = <any>null;
+            }
+            this.totalCount = _data["totalCount"] !== undefined ? _data["totalCount"] : <any>null;
+            this.totalPages = _data["totalPages"] !== undefined ? _data["totalPages"] : <any>null;
+            this.currentPage = _data["currentPage"] !== undefined ? _data["currentPage"] : <any>null;
+            this.pageSize = _data["pageSize"] !== undefined ? _data["pageSize"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PaginatedResultOfSalesHeaderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResultOfSalesHeaderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount !== undefined ? this.totalCount : <any>null;
+        data["totalPages"] = this.totalPages !== undefined ? this.totalPages : <any>null;
+        data["currentPage"] = this.currentPage !== undefined ? this.currentPage : <any>null;
+        data["pageSize"] = this.pageSize !== undefined ? this.pageSize : <any>null;
+        return data;
+    }
+}
+
+export interface IPaginatedResultOfSalesHeaderDto {
+    items?: SalesHeaderDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+}
+
+export class SalesHeaderDto implements ISalesHeaderDto {
+    id?: string;
+    totalAmount?: number;
+    transNum?: string;
+    transactionDate?: string;
+    soldBy?: string;
+    customerName?: string;
+    salesDetailsDto?: SalesDetailDto[];
+
+    constructor(data?: ISalesHeaderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.totalAmount = _data["totalAmount"] !== undefined ? _data["totalAmount"] : <any>null;
+            this.transNum = _data["transNum"] !== undefined ? _data["transNum"] : <any>null;
+            this.transactionDate = _data["transactionDate"] !== undefined ? _data["transactionDate"] : <any>null;
+            this.soldBy = _data["soldBy"] !== undefined ? _data["soldBy"] : <any>null;
+            this.customerName = _data["customerName"] !== undefined ? _data["customerName"] : <any>null;
+            if (Array.isArray(_data["salesDetailsDto"])) {
+                this.salesDetailsDto = [] as any;
+                for (let item of _data["salesDetailsDto"])
+                    this.salesDetailsDto!.push(SalesDetailDto.fromJS(item));
+            }
+            else {
+                this.salesDetailsDto = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): SalesHeaderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesHeaderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["totalAmount"] = this.totalAmount !== undefined ? this.totalAmount : <any>null;
+        data["transNum"] = this.transNum !== undefined ? this.transNum : <any>null;
+        data["transactionDate"] = this.transactionDate !== undefined ? this.transactionDate : <any>null;
+        data["soldBy"] = this.soldBy !== undefined ? this.soldBy : <any>null;
+        data["customerName"] = this.customerName !== undefined ? this.customerName : <any>null;
+        if (Array.isArray(this.salesDetailsDto)) {
+            data["salesDetailsDto"] = [];
+            for (let item of this.salesDetailsDto)
+                data["salesDetailsDto"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ISalesHeaderDto {
+    id?: string;
+    totalAmount?: number;
+    transNum?: string;
+    transactionDate?: string;
+    soldBy?: string;
+    customerName?: string;
+    salesDetailsDto?: SalesDetailDto[];
+}
+
+export class SalesDetailDto implements ISalesDetailDto {
+    productPrice?: number;
+    quantity?: number;
+    discount?: number;
+    productName?: string;
+    actualSellingPrice?: number;
+    amount?: number;
+
+    constructor(data?: ISalesDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productPrice = _data["productPrice"] !== undefined ? _data["productPrice"] : <any>null;
+            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
+            this.actualSellingPrice = _data["actualSellingPrice"] !== undefined ? _data["actualSellingPrice"] : <any>null;
+            this.amount = _data["amount"] !== undefined ? _data["amount"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): SalesDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productPrice"] = this.productPrice !== undefined ? this.productPrice : <any>null;
+        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["discount"] = this.discount !== undefined ? this.discount : <any>null;
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
+        data["actualSellingPrice"] = this.actualSellingPrice !== undefined ? this.actualSellingPrice : <any>null;
+        data["amount"] = this.amount !== undefined ? this.amount : <any>null;
+        return data;
+    }
+}
+
+export interface ISalesDetailDto {
+    productPrice?: number;
+    quantity?: number;
+    discount?: number;
+    productName?: string;
+    actualSellingPrice?: number;
+    amount?: number;
+}
+
 export class CreateOrEditSalesDto implements ICreateOrEditSalesDto {
     salesHeaderId?: string | null;
     customerId?: string | null;
@@ -1836,6 +2138,109 @@ export class TransNumReaderDto implements ITransNumReaderDto {
 export interface ITransNumReaderDto {
     transNum?: string;
     quantity?: number;
+}
+
+export class CreateOrEditSalesV1Dto implements ICreateOrEditSalesV1Dto {
+    salesHeaderId?: string | null;
+    customerId?: string | null;
+    createSalesDetailV1Dto?: CreateSalesDetailV1Dto[];
+
+    constructor(data?: ICreateOrEditSalesV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.salesHeaderId = _data["salesHeaderId"] !== undefined ? _data["salesHeaderId"] : <any>null;
+            this.customerId = _data["customerId"] !== undefined ? _data["customerId"] : <any>null;
+            if (Array.isArray(_data["createSalesDetailV1Dto"])) {
+                this.createSalesDetailV1Dto = [] as any;
+                for (let item of _data["createSalesDetailV1Dto"])
+                    this.createSalesDetailV1Dto!.push(CreateSalesDetailV1Dto.fromJS(item));
+            }
+            else {
+                this.createSalesDetailV1Dto = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateOrEditSalesV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrEditSalesV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["salesHeaderId"] = this.salesHeaderId !== undefined ? this.salesHeaderId : <any>null;
+        data["customerId"] = this.customerId !== undefined ? this.customerId : <any>null;
+        if (Array.isArray(this.createSalesDetailV1Dto)) {
+            data["createSalesDetailV1Dto"] = [];
+            for (let item of this.createSalesDetailV1Dto)
+                data["createSalesDetailV1Dto"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface ICreateOrEditSalesV1Dto {
+    salesHeaderId?: string | null;
+    customerId?: string | null;
+    createSalesDetailV1Dto?: CreateSalesDetailV1Dto[];
+}
+
+export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
+    productId!: number;
+    quantity?: number;
+    actualSellingPrice?: number;
+    discount?: number;
+
+    constructor(data?: ICreateSalesDetailV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"] !== undefined ? _data["productId"] : <any>null;
+            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.actualSellingPrice = _data["actualSellingPrice"] !== undefined ? _data["actualSellingPrice"] : <any>null;
+            this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): CreateSalesDetailV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSalesDetailV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId !== undefined ? this.productId : <any>null;
+        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["actualSellingPrice"] = this.actualSellingPrice !== undefined ? this.actualSellingPrice : <any>null;
+        data["discount"] = this.discount !== undefined ? this.discount : <any>null;
+        return data;
+    }
+}
+
+export interface ICreateSalesDetailV1Dto {
+    productId: number;
+    quantity?: number;
+    actualSellingPrice?: number;
+    discount?: number;
 }
 
 export class CreateStocksReceivingDto implements ICreateStocksReceivingDto {
