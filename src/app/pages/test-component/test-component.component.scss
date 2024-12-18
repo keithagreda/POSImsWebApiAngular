@@ -1,0 +1,28 @@
+@import "src/assets/scss/_variables.scss";
+
+.item-box {
+  //   display: flex;
+  //   justify-content: center;
+  //   align-items: center;
+  background-color: $primary;
+  color: $white;
+  //   width: 150px;
+  //   height: 150px;
+  input {
+    width: calc(100% - 80px); // Full width minus button widths
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    margin: 0 5px;
+    text-align: center; // Center the text inside input
+  }
+
+  button {
+    width: 35px; // Button width
+    height: 35px; // Button height
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+  }
+}

@@ -35,6 +35,7 @@ import {
   StocksService,
   StorageLocationService,
 } from './services/nswag/nswag.service';
+import { CartService } from './services/cart.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -43,6 +44,7 @@ export const appConfig: ApplicationConfig = {
     StocksService,
     StorageLocationService,
     SalesService,
+    CartService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,

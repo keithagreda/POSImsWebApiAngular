@@ -1698,6 +1698,7 @@ export interface IPaginatedResultOfGetProductDropDownTableDto {
 export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
     id?: number;
     name?: string;
+    price?: number;
 
     constructor(data?: IGetProductDropDownTableDto) {
         if (data) {
@@ -1712,6 +1713,7 @@ export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
         if (_data) {
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.price = _data["price"] !== undefined ? _data["price"] : <any>null;
         }
     }
 
@@ -1726,6 +1728,7 @@ export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id !== undefined ? this.id : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["price"] = this.price !== undefined ? this.price : <any>null;
         return data;
     }
 }
@@ -1733,6 +1736,7 @@ export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
 export interface IGetProductDropDownTableDto {
     id?: number;
     name?: string;
+    price?: number;
 }
 
 export class ApiResponseOfPaginatedResultOfSalesHeaderDto implements IApiResponseOfPaginatedResultOfSalesHeaderDto {
@@ -2198,6 +2202,7 @@ export interface ICreateOrEditSalesV1Dto {
 export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
     productId!: number;
     quantity?: number;
+    productPrice?: number;
     actualSellingPrice?: number;
     discount?: number;
 
@@ -2214,6 +2219,7 @@ export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
         if (_data) {
             this.productId = _data["productId"] !== undefined ? _data["productId"] : <any>null;
             this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.productPrice = _data["productPrice"] !== undefined ? _data["productPrice"] : <any>null;
             this.actualSellingPrice = _data["actualSellingPrice"] !== undefined ? _data["actualSellingPrice"] : <any>null;
             this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
         }
@@ -2230,6 +2236,7 @@ export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
         data = typeof data === 'object' ? data : {};
         data["productId"] = this.productId !== undefined ? this.productId : <any>null;
         data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["productPrice"] = this.productPrice !== undefined ? this.productPrice : <any>null;
         data["actualSellingPrice"] = this.actualSellingPrice !== undefined ? this.actualSellingPrice : <any>null;
         data["discount"] = this.discount !== undefined ? this.discount : <any>null;
         return data;
@@ -2239,6 +2246,7 @@ export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
 export interface ICreateSalesDetailV1Dto {
     productId: number;
     quantity?: number;
+    productPrice?: number;
     actualSellingPrice?: number;
     discount?: number;
 }

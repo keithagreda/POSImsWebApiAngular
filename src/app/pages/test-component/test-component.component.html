@@ -1,15 +1,52 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="flex-container">
-      <ng-container *ngFor="let item of items">
-        <button
-          mat-flat-button
-          [ngStyle]="{ height: '150px', width: '150px' }"
-          color="primary"
-          class="m-r-8 flex-item"
-        >
-          {{ item.name }}
-        </button>
+      <div class="row">
+        <ng-container *ngFor="let item of items">
+          <div class="col-lg-4 col-sm-6">
+            <mat-card class="b-1 shadow-none item-box">
+              <mat-card-header>
+                <mat-card-title>{{ item.name }}</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="item-control">
+                  <button (click)="addToCart(item)">+</button>
+                  <input type="text" />
+                  <button (click)="minusQuantity(item)">-</button>
+                </div>
+                <!-- <button
+                  mat-flat-button
+                  color="primary"
+                  matTooltip="Info about the action"
+                >
+                  Button
+                </button> -->
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- <button
+            mat-flat-button
+            [ngStyle]="{ height: '150px', width: '150px' }"
+            color="primary"
+            class="m-r-8 flex-item"
+            (click)="addToCart(item)"
+          ></button> -->
+        </ng-container>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>
+<!-- add to cart -->
+<mat-card class="cardWithShadow">
+  <mat-card-header>
+    <mat-card-title>Order Summary</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="flex-container">
+      <ng-container *ngFor="let item of cartItem">
+        {{ item.productId }}
+        {{ item.quantity }}
       </ng-container>
     </div>
   </mat-card-content>
