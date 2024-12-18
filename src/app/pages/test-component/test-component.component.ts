@@ -25,11 +25,12 @@ import {
   styleUrl: './test-component.component.scss',
 })
 export class TestComponentComponent implements OnInit {
-  sideBarVisible2 = true;
+  sideBarVisible2 = false;
   items: GetProductDropDownTableDto[] = [];
   tempCartItem: CreateSalesDetailV1Dto[] = [];
   cartItem: CreateSalesDetailV1Dto[] = [];
   product: CreateSalesDetailV1Dto = new CreateSalesDetailV1Dto();
+  selectedProduct: CreateSalesDetailV1Dto = new CreateSalesDetailV1Dto();
   constructor(
     private _productService: ProductService,
     private _cartService: CartService
@@ -53,30 +54,63 @@ export class TestComponentComponent implements OnInit {
     this.cartItem = this._cartService.getCart();
   }
 
-  showDialog() {}
+  showControl(selectedItem: GetProductDropDownTableDto, items: GetProductDropDownTableDto[]) {
+    if(selectedItem.showControl){
+      return;
+    }
+    this.selectedProduct = new CreateSalesDetailV1Dto();
+    this.selectedProduct.productId = selectedItem.id ?? 0;
+    this.selectedProduct.quantity = 1;
+    items.forEach(item => {
+      item.showControl = (item === selectedItem) ? !item.showControl : false;
+    });
+  }
+  
 
-  addToCart(product: GetProductDropDownTableDto) {}
+  showDialog() {
+    this.sideBarVisible2 = true;
+  }
+
+  addToCart() {
+    this.showDialog();
+    this._cartService.addToCart(this.selectedProduct);
+    this.getCartItem();
+  }
 
   addQuantity(product: GetProductDropDownTableDto) {
-    let addToCartDto = new CreateSalesDetailV1Dto();
-    addToCartDto.productId = product.id ?? 0;
-    addToCartDto.quantity = 1;
-    addToCartDto.productPrice = product.price
-      ? parseFloat(product.price.toFixed(2))
-      : 0; // Ensure a number with two decimals
-    console.log(product);
-    this._cartService.addToCart(addToCartDto);
-    this.getCartItem();
+    this.selectedProduct.productId = product.id ?? 0;
+    this.selectedProduct.quantity = (this.selectedProduct.quantity || 0) + 1;
+    
+    // this._cartService.addToCart(addToCartDto);
+    // this.getCartItem();
   }
   minusQuantity(product: GetProductDropDownTableDto) {
-    let minusToCart = new CreateSalesDetailV1Dto();
-    minusToCart.productId = product.id ?? 0;
-    minusToCart.quantity = 1;
-    minusToCart.productPrice = product.price
-      ? parseFloat(product.price.toFixed(2))
-      : 0; // Ensure a number with two decimals
-    console.log(product);
-    this._cartService.minusQuantity(minusToCart);
-    this.getCartItem();
+    if((this.selectedProduct.quantity || 0) <= 1) return;
+    this.selectedProduct.productId = product.id ?? 0;
+    this.selectedProduct.quantity = (this.selectedProduct.quantity || 0) - 1;
   }
+
+  // addQuantity(product: GetProductDropDownTableDto) {
+  //   let addToCartDto = new CreateSalesDetailV1Dto();
+  //   addToCartDto.productId = product.id ?? 0;
+  //   addToCartDto.quantity = 1;
+  //   addToCartDto.productPrice = product.price
+  //     ? parseFloat(product.price.toFixed(2))
+  //     : 0; // Ensure a number with two decimals
+  //   console.log(product);
+  //   this._cartService.addToCart(addToCartDto);
+  //   this.getCartItem();
+  // }
+  // minusQuantity(product: GetProductDropDownTableDto) {
+  //   let minusToCart = new CreateSalesDetailV1Dto();
+  //   minusToCart.productId = product.id ?? 0;
+  //   minusToCart.quantity = 1;
+  //   minusToCart.productPrice = product.price
+  //     ? parseFloat(product.price.toFixed(2))
+  //     : 0; // Ensure a number with two decimals
+  //   console.log(product);
+  //   this._cartService.minusQuantity(minusToCart);
+  //   this.getCartItem();
+  // }
+
 }

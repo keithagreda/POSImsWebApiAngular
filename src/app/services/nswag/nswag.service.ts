@@ -1699,6 +1699,7 @@ export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
     id?: number;
     name?: string;
     price?: number;
+    showControl?: boolean;
 
     constructor(data?: IGetProductDropDownTableDto) {
         if (data) {
@@ -1714,6 +1715,7 @@ export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.price = _data["price"] !== undefined ? _data["price"] : <any>null;
+            this.showControl = _data["showControl"] !== undefined ? _data["showControl"] : <any>null;
         }
     }
 
@@ -1729,6 +1731,7 @@ export class GetProductDropDownTableDto implements IGetProductDropDownTableDto {
         data["id"] = this.id !== undefined ? this.id : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
         data["price"] = this.price !== undefined ? this.price : <any>null;
+        data["showControl"] = this.showControl !== undefined ? this.showControl : <any>null;
         return data;
     }
 }
@@ -1737,6 +1740,7 @@ export interface IGetProductDropDownTableDto {
     id?: number;
     name?: string;
     price?: number;
+    showControl?: boolean;
 }
 
 export class ApiResponseOfPaginatedResultOfSalesHeaderDto implements IApiResponseOfPaginatedResultOfSalesHeaderDto {

@@ -1,19 +1,25 @@
+
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="flex-container">
       <div class="row">
         <ng-container *ngFor="let item of items">
           <div class="col-lg-4 col-sm-6">
-            <mat-card class="b-1 shadow-none item-box">
-              <mat-card-header>
+            <mat-card class="b-1 shadow-none item-box" (click)="showControl(item, items)">
+              <mat-card-header class="prod-header">
                 <mat-card-title>{{ item.name }}</mat-card-title>
+                <span> PRICE: {{ item.price }}</span>
               </mat-card-header>
               <mat-card-content>
-                <div class="item-control">
-                  <button (click)="addQuantity(item)">+</button>
-                  <input type="text" />
-                  <button (click)="minusQuantity(item)">-</button>
+                <div class="item-control"  *ngIf="item.showControl" >
+                  <div class="item-quantity">
+                    <button (click)="addQuantity(item)">+</button>
+                    <input  matInput type="number" placeholder="Quantity" name="quantity" [(ngModel)]="selectedProduct.quantity"/>
+                    <button (click)="minusQuantity(item)">-</button>
+                  </div>
+                  <button mat-flat-button class="w-100" color="warn" (click)="addToCart()"> Save</button>
                 </div>
+                
                 <!-- <button
                   mat-flat-button
                   color="primary"
@@ -38,18 +44,25 @@
   </mat-card-content>
 </mat-card>
 <!-- add to cart -->
-<p-sidebar [(visible)]="sideBarVisible2" position="right">
+
+<p-sidebar [(visible)]="sideBarVisible2" [appendTo]="'body'" position="right">
   <mat-card class="cardWithShadow">
     <mat-card-header>
       <mat-card-title>Order Summary</mat-card-title>
     </mat-card-header>
     <mat-card-content>
       <div class="flex-container">
-        <ng-container *ngFor="let item of cartItem">
-          {{ item.productId }}
-          {{ item.quantity }}
-        </ng-container>
+        <div class="row">
+          <ng-container *ngFor="let item of cartItem">
+            <div class="col-lg-4 col-sm-6">
+            {{ item.productId }}
+            {{ item.quantity }}
+          </div>
+          </ng-container>
+        </div>
+        
       </div>
     </mat-card-content>
   </mat-card>
 </p-sidebar>
+

@@ -26,3 +26,27 @@
     display: inline-block;
   }
 }
+
+.prod-header{
+  flex-direction: column;
+}
+
+.item-control{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-quantity{
+  margin-bottom: 15px;
+}
+
+.add-to-cart-btn{
+  width: 100%;
+}
+
+
+
+
+
