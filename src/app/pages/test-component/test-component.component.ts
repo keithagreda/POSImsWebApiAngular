@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { CartService } from 'src/app/services/cart.service';
+import { SidebarModule } from 'primeng/sidebar';
 import {
   CreateSalesDetailV1Dto,
   GetProductDropDownTableDto,
@@ -13,12 +14,20 @@ import {
 @Component({
   selector: 'app-test-component',
   standalone: true,
-  imports: [MaterialModule, CommonModule, FormsModule, DialogModule],
+  imports: [
+    MaterialModule,
+    CommonModule,
+    FormsModule,
+    DialogModule,
+    SidebarModule,
+  ],
   templateUrl: './test-component.component.html',
   styleUrl: './test-component.component.scss',
 })
 export class TestComponentComponent implements OnInit {
+  sideBarVisible2 = true;
   items: GetProductDropDownTableDto[] = [];
+  tempCartItem: CreateSalesDetailV1Dto[] = [];
   cartItem: CreateSalesDetailV1Dto[] = [];
   product: CreateSalesDetailV1Dto = new CreateSalesDetailV1Dto();
   constructor(

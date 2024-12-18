@@ -10,7 +10,7 @@
               </mat-card-header>
               <mat-card-content>
                 <div class="item-control">
-                  <button (click)="addToCart(item)">+</button>
+                  <button (click)="addQuantity(item)">+</button>
                   <input type="text" />
                   <button (click)="minusQuantity(item)">-</button>
                 </div>
@@ -38,16 +38,18 @@
   </mat-card-content>
 </mat-card>
 <!-- add to cart -->
-<mat-card class="cardWithShadow">
-  <mat-card-header>
-    <mat-card-title>Order Summary</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <div class="flex-container">
-      <ng-container *ngFor="let item of cartItem">
-        {{ item.productId }}
-        {{ item.quantity }}
-      </ng-container>
-    </div>
-  </mat-card-content>
-</mat-card>
+<p-sidebar [(visible)]="sideBarVisible2" position="right">
+  <mat-card class="cardWithShadow">
+    <mat-card-header>
+      <mat-card-title>Order Summary</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="flex-container">
+        <ng-container *ngFor="let item of cartItem">
+          {{ item.productId }}
+          {{ item.quantity }}
+        </ng-container>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</p-sidebar>
