@@ -16,37 +16,62 @@
     margin: 0 5px;
     text-align: center; // Center the text inside input
   }
-
-  button {
-    width: 35px; // Button width
-    height: 35px; // Button height
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: inline-block;
-  }
 }
 
-.prod-header{
+.trash-btn {
+  color: $error;
+  cursor: pointer;
+}
+
+.btn-qty {
+  width: 35px; // Button width
+  height: 35px; // Button height
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.prod-header {
   flex-direction: column;
 }
 
-.item-control{
+.item-control {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.item-quantity{
+.atc-item-control {
+}
+.atc-item-quantity {
   margin-bottom: 15px;
 }
 
-.add-to-cart-btn{
+.item-quantity {
+  margin-bottom: 15px;
+}
+
+.add-to-cart-btn {
   width: 100%;
 }
 
+.d-flex {
+  display: flex;
+  flex-direction: column;
+}
 
+.center {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+}
 
+.cart-item {
+  min-width: 250px;
+}
 
-
+.btn-add-to-cart {
+}

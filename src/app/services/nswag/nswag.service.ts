@@ -2209,6 +2209,7 @@ export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
     productPrice?: number;
     actualSellingPrice?: number;
     discount?: number;
+    productName?: string;
 
     constructor(data?: ICreateSalesDetailV1Dto) {
         if (data) {
@@ -2226,6 +2227,7 @@ export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
             this.productPrice = _data["productPrice"] !== undefined ? _data["productPrice"] : <any>null;
             this.actualSellingPrice = _data["actualSellingPrice"] !== undefined ? _data["actualSellingPrice"] : <any>null;
             this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
         }
     }
 
@@ -2243,6 +2245,7 @@ export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
         data["productPrice"] = this.productPrice !== undefined ? this.productPrice : <any>null;
         data["actualSellingPrice"] = this.actualSellingPrice !== undefined ? this.actualSellingPrice : <any>null;
         data["discount"] = this.discount !== undefined ? this.discount : <any>null;
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
         return data;
     }
 }
@@ -2253,6 +2256,7 @@ export interface ICreateSalesDetailV1Dto {
     productPrice?: number;
     actualSellingPrice?: number;
     discount?: number;
+    productName?: string;
 }
 
 export class CreateStocksReceivingDto implements ICreateStocksReceivingDto {
