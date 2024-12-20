@@ -69,25 +69,32 @@ export class TestComponentComponent implements OnInit {
     // Parse JSON data
     const parsedCartData = JSON.parse(cartData);
 
+    console.log(parsedCartData);
+
     // Map parsed data to SalesDetail instances
     const createSalesDetailV1Dto = parsedCartData.map(
-      (item: any) => new CreateSalesDetailV1Dto(item)
+      (item: CreateSalesDetailV1Dto) => {
+        const dto = CreateSalesDetailV1Dto.fromJS({
+          productId: item.productId,
+          actualSellingPrice: item.actualSellingPrice,
+          quantity: item.quantity,
+        });
+
+        return dto;
+      }
     );
 
-    const salesDto = {
+    console.log('sales detail', createSalesDetailV1Dto);
+
+    const salesDto = CreateOrEditSalesV1Dto.fromJS({
       salesHeaderId: null,
       customerId: null,
-      createSalesDetailV1Dto: createSalesDetailV1Dto, // Use the mapped instances here
-    };
+      createSalesDetailV1Dto: createSalesDetailV1Dto,
+    });
 
-    const salesDtoInstance: CreateOrEditSalesV1Dto = Object.assign(
-      new CreateOrEditSalesV1Dto(),
-      salesDto
-    );
+    console.log('salesDtoInstance', salesDto); // Log the final DTO for debugging
 
-    console.log('salesDtoInstance', salesDtoInstance); // Log the final DTO for debugging
-
-    this._salesService.createSales(salesDtoInstance).subscribe({
+    this._salesService.createSales(salesDto).subscribe({
       next: (res) => {
         this.saving = false;
         if (res.isSuccess) {
