@@ -10,6 +10,11 @@ export const navItems: NavItem[] = [
     route: '/dashboard',
   },
   {
+    displayName: 'Cashier',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/cashier',
+  },
+  {
     displayName: 'Sales',
     iconName: 'solar:widget-add-line-duotone',
     route: '/sales',

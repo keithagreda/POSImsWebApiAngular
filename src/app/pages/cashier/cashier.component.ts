@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
 import { DialogModule } from 'primeng/dialog';
+import { SidebarModule } from 'primeng/sidebar';
 import { MaterialModule } from 'src/app/material.module';
 import { CartService } from 'src/app/services/cart.service';
-import { SidebarModule } from 'primeng/sidebar';
 import {
   CreateOrEditSalesV1Dto,
   CreateSalesDetailV1Dto,
@@ -12,11 +13,10 @@ import {
   ProductService,
   SalesService,
 } from 'src/app/services/nswag/nswag.service';
-import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-test-component',
+  selector: 'app-cashier',
   standalone: true,
   imports: [
     MaterialModule,
@@ -25,10 +25,10 @@ import Swal from 'sweetalert2';
     DialogModule,
     SidebarModule,
   ],
-  templateUrl: './test-component.component.html',
-  styleUrl: './test-component.component.scss',
+  templateUrl: './cashier.component.html',
+  styleUrl: './cashier.component.scss',
 })
-export class TestComponentComponent implements OnInit {
+export class CashierComponent implements OnInit {
   sideBarVisible2 = false;
   saving = false;
   items: GetProductDropDownTableDto[] = [];
@@ -216,27 +216,4 @@ export class TestComponentComponent implements OnInit {
     this._cartService.removeFromCart(productId);
     this.getCartItem();
   }
-
-  // addQuantity(product: GetProductDropDownTableDto) {
-  //   let addToCartDto = new CreateSalesDetailV1Dto();
-  //   addToCartDto.productId = product.id ?? 0;
-  //   addToCartDto.quantity = 1;
-  //   addToCartDto.productPrice = product.price
-  //     ? parseFloat(product.price.toFixed(2))
-  //     : 0; // Ensure a number with two decimals
-  //   console.log(product);
-  //   this._cartService.addToCart(addToCartDto);
-  //   this.getCartItem();
-  // }
-  // minusQuantity(product: GetProductDropDownTableDto) {
-  //   let minusToCart = new CreateSalesDetailV1Dto();
-  //   minusToCart.productId = product.id ?? 0;
-  //   minusToCart.quantity = 1;
-  //   minusToCart.productPrice = product.price
-  //     ? parseFloat(product.price.toFixed(2))
-  //     : 0; // Ensure a number with two decimals
-  //   console.log(product);
-  //   this._cartService.minusQuantity(minusToCart);
-  //   this.getCartItem();
-  // }
 }

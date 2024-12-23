@@ -24,6 +24,12 @@ export const routes: Routes = [
             (m) => m.ProductsRoutes
           ),
       },
+
+      {
+        path: 'cashier',
+        loadChildren: () =>
+          import('./pages/cashier/cashier.routes').then((m) => m.CashierRoutes),
+      },
       {
         path: 'test',
         loadChildren: () =>

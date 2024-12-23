@@ -565,6 +565,58 @@ export class ProductService {
         }
         return _observableOf(null as any);
     }
+
+    getProductDetailsForCart(input: CreateSalesDetailV1Dto[]): Observable<ApiResponseOfListOfCreateSalesDetailV1Dto> {
+        let url_ = this.baseUrl + "/api/Product/GetProductDetailsForCart";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(input);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductDetailsForCart(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductDetailsForCart(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfListOfCreateSalesDetailV1Dto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfListOfCreateSalesDetailV1Dto>;
+        }));
+    }
+
+    protected processGetProductDetailsForCart(response: HttpResponseBase): Observable<ApiResponseOfListOfCreateSalesDetailV1Dto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfListOfCreateSalesDetailV1Dto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 @Injectable()
@@ -1743,6 +1795,135 @@ export interface IGetProductDropDownTableDto {
     showControl?: boolean;
 }
 
+export class ApiResponseOfListOfCreateSalesDetailV1Dto implements IApiResponseOfListOfCreateSalesDetailV1Dto {
+    data!: CreateSalesDetailV1Dto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfListOfCreateSalesDetailV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(CreateSalesDetailV1Dto.fromJS(item));
+            }
+            else {
+                this.data = <any>null;
+            }
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfListOfCreateSalesDetailV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfListOfCreateSalesDetailV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfListOfCreateSalesDetailV1Dto {
+    data: CreateSalesDetailV1Dto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
+    productId!: number;
+    quantity?: number;
+    productPrice?: number | null;
+    actualSellingPrice?: number | null;
+    discount?: number | null;
+    productName?: string | null;
+
+    constructor(data?: ICreateSalesDetailV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"] !== undefined ? _data["productId"] : <any>null;
+            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.productPrice = _data["productPrice"] !== undefined ? _data["productPrice"] : <any>null;
+            this.actualSellingPrice = _data["actualSellingPrice"] !== undefined ? _data["actualSellingPrice"] : <any>null;
+            this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): CreateSalesDetailV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateSalesDetailV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId !== undefined ? this.productId : <any>null;
+        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["productPrice"] = this.productPrice !== undefined ? this.productPrice : <any>null;
+        data["actualSellingPrice"] = this.actualSellingPrice !== undefined ? this.actualSellingPrice : <any>null;
+        data["discount"] = this.discount !== undefined ? this.discount : <any>null;
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
+        return data;
+    }
+}
+
+export interface ICreateSalesDetailV1Dto {
+    productId: number;
+    quantity?: number;
+    productPrice?: number | null;
+    actualSellingPrice?: number | null;
+    discount?: number | null;
+    productName?: string | null;
+}
+
 export class ApiResponseOfPaginatedResultOfSalesHeaderDto implements IApiResponseOfPaginatedResultOfSalesHeaderDto {
     data!: PaginatedResultOfSalesHeaderDto;
     message?: string;
@@ -2201,62 +2382,6 @@ export interface ICreateOrEditSalesV1Dto {
     salesHeaderId?: string | null;
     customerId?: string | null;
     createSalesDetailV1Dto?: CreateSalesDetailV1Dto[];
-}
-
-export class CreateSalesDetailV1Dto implements ICreateSalesDetailV1Dto {
-    productId!: number;
-    quantity?: number;
-    productPrice?: number;
-    actualSellingPrice?: number;
-    discount?: number;
-    productName?: string;
-
-    constructor(data?: ICreateSalesDetailV1Dto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.productId = _data["productId"] !== undefined ? _data["productId"] : <any>null;
-            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
-            this.productPrice = _data["productPrice"] !== undefined ? _data["productPrice"] : <any>null;
-            this.actualSellingPrice = _data["actualSellingPrice"] !== undefined ? _data["actualSellingPrice"] : <any>null;
-            this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
-            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
-        }
-    }
-
-    static fromJS(data: any): CreateSalesDetailV1Dto {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateSalesDetailV1Dto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["productId"] = this.productId !== undefined ? this.productId : <any>null;
-        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
-        data["productPrice"] = this.productPrice !== undefined ? this.productPrice : <any>null;
-        data["actualSellingPrice"] = this.actualSellingPrice !== undefined ? this.actualSellingPrice : <any>null;
-        data["discount"] = this.discount !== undefined ? this.discount : <any>null;
-        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
-        return data;
-    }
-}
-
-export interface ICreateSalesDetailV1Dto {
-    productId: number;
-    quantity?: number;
-    productPrice?: number;
-    actualSellingPrice?: number;
-    discount?: number;
-    productName?: string;
 }
 
 export class CreateStocksReceivingDto implements ICreateStocksReceivingDto {
