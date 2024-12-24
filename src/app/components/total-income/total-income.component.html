@@ -11,8 +11,9 @@
   
       <div class="row m-t-8">
         <div class="col-6">
-          <h5 class="f-s-24 f-w-500 m-b-4 m-t-30">$680</h5>
-          <span class="text-success f-w-600">+18%</span>
+          <h5 class="f-s-24 f-w-500 m-b-4 m-t-30">₱{{openInvTotalSales}}</h5>
+          <span *ngIf="openInvPercentage >= 0" class="text-success f-w-600">+{{openInvPercentage}}%</span>
+          <span *ngIf="openInvPercentage < 0" class="text-danger f-w-600">-{{openInvPercentage}}%</span>
         </div>
         <div class="col-6 d-flex align-items-center">
           <!-- chart -->
