@@ -39,10 +39,10 @@ export class CreateOrEditStocksReceivingModalComponent implements OnInit {
     new CreateStocksReceivingDto();
   selectedStorageLocation: GetStorageLocationForDropDownDto =
     new GetStorageLocationForDropDownDto();
-  selectedProduct: GetProductDropDownTableDto =
-    new GetProductDropDownTableDto();
+  selectedProduct: GetProductDropDownTableDto | null = null;
   storageLocations: GetStorageLocationForDropDownDto[] = [];
   products: GetProductDropDownTableDto[] = [];
+  title = '';
 
   filterTextProduct = '';
 
@@ -83,12 +83,13 @@ export class CreateOrEditStocksReceivingModalComponent implements OnInit {
   }
 
   filterProduct(event: any) {
-    this.filterTextProduct = event.query.toLowerCase();
+    this.filterTextProduct = event.query.toLowerCase() ?? '';
     this.getProducts();
   }
 
   onProductSelect() {
-    this.filterTextProduct = this.selectedProduct.name ?? '';
+    this.filterTextProduct =
+      this.selectedProduct != null ? this.selectedProduct.name! : '';
   }
 
   getStorageLocation() {
@@ -106,7 +107,8 @@ export class CreateOrEditStocksReceivingModalComponent implements OnInit {
 
   save() {
     this.saving = true;
-    this.createOrEditReceiveStocks.productId = this.selectedProduct.id ?? 0;
+    this.createOrEditReceiveStocks.productId =
+      this.selectedProduct != null ? this.selectedProduct.id! : 0;
     this.createOrEditReceiveStocks.storageLocationId =
       this.selectedStorageLocation.id ?? 0;
     this._stocksReceivingService

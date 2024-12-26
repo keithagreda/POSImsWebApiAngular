@@ -1,21 +1,29 @@
 <mat-card class="cardWithShadow">
   <mat-card-content>
     <div class="hstack align-items-center">
-      <div
+      <!-- <div
         class="rounded icon-48 bg-light-error d-flex align-items-center flex-shrink-0 justify-content-center"
       >
         <i class="iconify f-s-24 text-error" data-icon="solar:box-linear"></i>
-      </div>
+      </div> -->
       <mat-card-title class="f-s-16 f-w-500 m-b-0"
-        >Current Inventory Income</mat-card-title
+        >Monthly Sales</mat-card-title
       >
     </div>
 
-    <div class="row m-t-8">
+    <apx-chart
+      [series]="totalincomeChart.series"
+      [chart]="totalincomeChart.chart"
+      [stroke]="totalincomeChart.stroke"
+      [markers]="totalincomeChart.markers"
+      [tooltip]="totalincomeChart.tooltip"
+      [xaxis]="totalincomeChart.xaxis"
+      [legend]="totalincomeChart.legend"
+    ></apx-chart>
+
+    <!-- <div class="row m-t-8">
       <div class="col-6">
-        <h5 class="f-s-24 f-w-500 m-b-4 m-t-30">
-          ₱{{ openInvTotalSales | number : "1.0-0" }}
-        </h5>
+        <h5 class="f-s-24 f-w-500 m-b-4 m-t-30">₱{{ openInvTotalSales }}</h5>
         <span *ngIf="openInvPercentage >= 0" class="text-success f-w-600"
           >+{{ openInvPercentage }}%</span
         >
@@ -24,7 +32,7 @@
         >
       </div>
       <div class="col-6 d-flex align-items-center">
-        <!-- chart -->
+        chart
         <apx-chart
           [series]="totalincomeChart.series"
           [chart]="totalincomeChart.chart"
@@ -33,6 +41,6 @@
           [tooltip]="totalincomeChart.tooltip"
         ></apx-chart>
       </div>
-    </div>
+    </div> -->
   </mat-card-content>
 </mat-card>

@@ -8,6 +8,9 @@ import { AppRevenueProductComponent } from 'src/app/components/revenue-product/r
 import { AppRevenueForecastComponent } from 'src/app/components/revenue-forecast/revenue-forecast.component';
 import { ToastrService } from 'ngx-toastr';
 import { DialogModule } from 'primeng/dialog';
+import { MonthlySalesChartComponent } from 'src/app/components/monthly-sales-chart/monthly-sales-chart.component';
+import { CurrentStocksComponent } from '../../components/current-stocks/current-stocks.component';
+import { StocksGenerationComponent } from 'src/app/components/stocks-generation/stocks-generation.component';
 
 @Component({
   selector: 'app-starter',
@@ -20,7 +23,10 @@ import { DialogModule } from 'primeng/dialog';
     AppBlogCardsComponent,
     AppRevenueProductComponent,
     AppRevenueForecastComponent,
+    MonthlySalesChartComponent,
     DialogModule,
+    CurrentStocksComponent,
+    StocksGenerationComponent,
   ],
   templateUrl: './starter.component.html',
   styleUrls: ['./starter.component.scss'],
@@ -29,7 +35,7 @@ import { DialogModule } from 'primeng/dialog';
 export class StarterComponent {
   visible = false;
   constructor(private _toastr: ToastrService) {
-    this._toastr.success('yow');
+    // this._toastr.success('yow');
   }
 
   onShow() {

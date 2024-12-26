@@ -29,6 +29,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 import {
+  InventoryService,
   ProductCategoryService,
   ProductService,
   SalesService,
@@ -36,6 +37,7 @@ import {
   StorageLocationService,
 } from './services/nswag/nswag.service';
 import { CartService } from './services/cart.service';
+import { LoadingService } from './services/loading.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -45,6 +47,8 @@ export const appConfig: ApplicationConfig = {
     StorageLocationService,
     SalesService,
     CartService,
+    InventoryService,
+    LoadingService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,

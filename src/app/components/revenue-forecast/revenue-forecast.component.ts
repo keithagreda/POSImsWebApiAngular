@@ -53,10 +53,10 @@ export class AppRevenueForecastComponent {
           name: '2024',
           data: [1.2, 2.7, 1, 3.6, 2.1, 2.7, 2.2, 1.3, 2.5],
         },
-        {
-          name: '2023',
-          data: [-2.8, -1.1, -2.5, -1.5, -2.3, -1.9, -1, -2.1, -1.3],
-        },
+        // {
+        //   name: '2023',
+        //   data: [-2.8, -1.1, -2.5, -1.5, -2.3, -1.9, -1, -2.1, -1.3],
+        // },
       ],
 
       chart: {
@@ -108,7 +108,6 @@ export class AppRevenueForecastComponent {
       },
 
       yaxis: {
-        min: -5,
         max: 5,
         tickAmount: 4,
       },

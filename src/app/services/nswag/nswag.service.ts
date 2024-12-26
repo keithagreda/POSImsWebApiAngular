@@ -26,7 +26,7 @@ export class InventoryService {
         this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
-    getCurrentStocks(): Observable<FileResponse> {
+    getCurrentStocks(): Observable<ApiResponseOfListOfCurrentInventoryDto> {
         let url_ = this.baseUrl + "/api/Inventory/GetCurrentStocks";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -34,7 +34,7 @@ export class InventoryService {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -45,31 +45,27 @@ export class InventoryService {
                 try {
                     return this.processGetCurrentStocks(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfListOfCurrentInventoryDto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfListOfCurrentInventoryDto>;
         }));
     }
 
-    protected processGetCurrentStocks(response: HttpResponseBase): Observable<FileResponse> {
+    protected processGetCurrentStocks(response: HttpResponseBase): Observable<ApiResponseOfListOfCurrentInventoryDto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfListOfCurrentInventoryDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
@@ -887,6 +883,56 @@ export class SalesService {
         }
         return _observableOf(null as any);
     }
+
+    getPerMonthSales(year: number | null | undefined): Observable<ApiResponseOfListOfPerMonthSalesDto> {
+        let url_ = this.baseUrl + "/api/Sales/GetTotalMonthlySales?";
+        if (year !== undefined && year !== null)
+            url_ += "year=" + encodeURIComponent("" + year) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPerMonthSales(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPerMonthSales(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfListOfPerMonthSalesDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfListOfPerMonthSalesDto>;
+        }));
+    }
+
+    protected processGetPerMonthSales(response: HttpResponseBase): Observable<ApiResponseOfListOfPerMonthSalesDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfListOfPerMonthSalesDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 @Injectable()
@@ -990,6 +1036,58 @@ export class StocksService {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = ApiResponseOfListOfGetAllStocksReceivingDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    getStocksGeneration(numberOfHours: number | undefined): Observable<ApiResponseOfListOfGetStocksGenerationDto> {
+        let url_ = this.baseUrl + "/api/Stocks/GetStocksGeneration?";
+        if (numberOfHours === null)
+            throw new Error("The parameter 'numberOfHours' cannot be null.");
+        else if (numberOfHours !== undefined)
+            url_ += "NumberOfHours=" + encodeURIComponent("" + numberOfHours) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStocksGeneration(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStocksGeneration(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfListOfGetStocksGenerationDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfListOfGetStocksGenerationDto>;
+        }));
+    }
+
+    protected processGetStocksGeneration(response: HttpResponseBase): Observable<ApiResponseOfListOfGetStocksGenerationDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfListOfGetStocksGenerationDto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -1115,6 +1213,127 @@ export class StorageLocationService {
         }
         return _observableOf(null as any);
     }
+}
+
+export class ApiResponseOfListOfCurrentInventoryDto implements IApiResponseOfListOfCurrentInventoryDto {
+    data!: CurrentInventoryDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfListOfCurrentInventoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(CurrentInventoryDto.fromJS(item));
+            }
+            else {
+                this.data = <any>null;
+            }
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfListOfCurrentInventoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfListOfCurrentInventoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfListOfCurrentInventoryDto {
+    data: CurrentInventoryDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class CurrentInventoryDto implements ICurrentInventoryDto {
+    productName?: string;
+    receivedQty?: number;
+    salesQty?: number;
+    currentStocks?: number;
+
+    constructor(data?: ICurrentInventoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
+            this.receivedQty = _data["receivedQty"] !== undefined ? _data["receivedQty"] : <any>null;
+            this.salesQty = _data["salesQty"] !== undefined ? _data["salesQty"] : <any>null;
+            this.currentStocks = _data["currentStocks"] !== undefined ? _data["currentStocks"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): CurrentInventoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CurrentInventoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
+        data["receivedQty"] = this.receivedQty !== undefined ? this.receivedQty : <any>null;
+        data["salesQty"] = this.salesQty !== undefined ? this.salesQty : <any>null;
+        data["currentStocks"] = this.currentStocks !== undefined ? this.currentStocks : <any>null;
+        return data;
+    }
+}
+
+export interface ICurrentInventoryDto {
+    productName?: string;
+    receivedQty?: number;
+    salesQty?: number;
+    currentStocks?: number;
 }
 
 export class CreateBeginningEntryDto implements ICreateBeginningEntryDto {
@@ -2597,6 +2816,127 @@ export interface IGetTotalSalesDto {
     allSalesPercentage?: number[];
 }
 
+export class ApiResponseOfListOfPerMonthSalesDto implements IApiResponseOfListOfPerMonthSalesDto {
+    data!: PerMonthSalesDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfListOfPerMonthSalesDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(PerMonthSalesDto.fromJS(item));
+            }
+            else {
+                this.data = <any>null;
+            }
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfListOfPerMonthSalesDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfListOfPerMonthSalesDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfListOfPerMonthSalesDto {
+    data: PerMonthSalesDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PerMonthSalesDto implements IPerMonthSalesDto {
+    month?: string;
+    year?: string;
+    salesPercentage?: number;
+    totalMonthlySales?: number;
+
+    constructor(data?: IPerMonthSalesDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.month = _data["month"] !== undefined ? _data["month"] : <any>null;
+            this.year = _data["year"] !== undefined ? _data["year"] : <any>null;
+            this.salesPercentage = _data["salesPercentage"] !== undefined ? _data["salesPercentage"] : <any>null;
+            this.totalMonthlySales = _data["totalMonthlySales"] !== undefined ? _data["totalMonthlySales"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PerMonthSalesDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PerMonthSalesDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["month"] = this.month !== undefined ? this.month : <any>null;
+        data["year"] = this.year !== undefined ? this.year : <any>null;
+        data["salesPercentage"] = this.salesPercentage !== undefined ? this.salesPercentage : <any>null;
+        data["totalMonthlySales"] = this.totalMonthlySales !== undefined ? this.totalMonthlySales : <any>null;
+        return data;
+    }
+}
+
+export interface IPerMonthSalesDto {
+    month?: string;
+    year?: string;
+    salesPercentage?: number;
+    totalMonthlySales?: number;
+}
+
 export class CreateStocksReceivingDto implements ICreateStocksReceivingDto {
     quantity!: number;
     productId!: number;
@@ -2776,6 +3116,127 @@ export interface IGetAllStocksReceivingDto {
     quantity?: number;
     storageLocationId?: number;
     dateReceived?: string;
+}
+
+export class ApiResponseOfListOfGetStocksGenerationDto implements IApiResponseOfListOfGetStocksGenerationDto {
+    data!: GetStocksGenerationDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfListOfGetStocksGenerationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["data"])) {
+                this.data = [] as any;
+                for (let item of _data["data"])
+                    this.data!.push(GetStocksGenerationDto.fromJS(item));
+            }
+            else {
+                this.data = <any>null;
+            }
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfListOfGetStocksGenerationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfListOfGetStocksGenerationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.data)) {
+            data["data"] = [];
+            for (let item of this.data)
+                data["data"].push(item.toJSON());
+        }
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfListOfGetStocksGenerationDto {
+    data: GetStocksGenerationDto[];
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class GetStocksGenerationDto implements IGetStocksGenerationDto {
+    productName?: string;
+    generatedQuantity?: number;
+    baselineQuantity?: number;
+    differentialPercentage?: number;
+
+    constructor(data?: IGetStocksGenerationDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
+            this.generatedQuantity = _data["generatedQuantity"] !== undefined ? _data["generatedQuantity"] : <any>null;
+            this.baselineQuantity = _data["baselineQuantity"] !== undefined ? _data["baselineQuantity"] : <any>null;
+            this.differentialPercentage = _data["differentialPercentage"] !== undefined ? _data["differentialPercentage"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetStocksGenerationDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetStocksGenerationDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
+        data["generatedQuantity"] = this.generatedQuantity !== undefined ? this.generatedQuantity : <any>null;
+        data["baselineQuantity"] = this.baselineQuantity !== undefined ? this.baselineQuantity : <any>null;
+        data["differentialPercentage"] = this.differentialPercentage !== undefined ? this.differentialPercentage : <any>null;
+        return data;
+    }
+}
+
+export interface IGetStocksGenerationDto {
+    productName?: string;
+    generatedQuantity?: number;
+    baselineQuantity?: number;
+    differentialPercentage?: number;
 }
 
 export class CreateOrEditStorageLocationDto implements ICreateOrEditStorageLocationDto {
