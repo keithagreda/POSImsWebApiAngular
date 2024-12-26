@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -36,8 +36,9 @@ export interface MonthlySalesChart {
   templateUrl: './monthly-sales-chart.component.html',
   styleUrls: ['./monthly-sales-chart.component.scss'],
 })
-export class MonthlySalesChartComponent implements OnInit {
+export class MonthlySalesChartComponent implements OnInit, OnDestroy {
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
+  active = false;
   data: number[] = [];
   categories: string[] = [];
   openInvTotalSales = 0;
@@ -48,6 +49,9 @@ export class MonthlySalesChartComponent implements OnInit {
     private _salesSerivice: SalesService,
     private _loadingService: LoadingService
   ) {}
+  ngOnDestroy(): void {
+    this.active = false;
+  }
 
   ngOnInit(): void {
     this._loadingService.show();
@@ -58,6 +62,7 @@ export class MonthlySalesChartComponent implements OnInit {
           this.categories.push(element.month ?? 'N/A');
         });
         this.constructChart();
+        this.active = true;
         this._loadingService.hide();
       },
       error: (err) => {

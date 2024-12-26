@@ -12,6 +12,7 @@
     </div>
 
     <apx-chart
+      *ngIf="active"
       [series]="totalincomeChart.series"
       [chart]="totalincomeChart.chart"
       [stroke]="totalincomeChart.stroke"
