@@ -26,6 +26,14 @@ export const routes: Routes = [
       },
 
       {
+        path: 'inventory',
+        loadChildren: () =>
+          import('./pages/inventory/inventory.routes').then(
+            (m) => m.InventoryRoutes
+          ),
+      },
+
+      {
         path: 'cashier',
         loadChildren: () =>
           import('./pages/cashier/cashier.routes').then((m) => m.CashierRoutes),

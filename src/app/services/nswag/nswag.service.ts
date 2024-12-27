@@ -1292,6 +1292,7 @@ export class CurrentInventoryDto implements ICurrentInventoryDto {
     productName?: string;
     receivedQty?: number;
     salesQty?: number;
+    begQty?: number;
     currentStocks?: number;
 
     constructor(data?: ICurrentInventoryDto) {
@@ -1308,6 +1309,7 @@ export class CurrentInventoryDto implements ICurrentInventoryDto {
             this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
             this.receivedQty = _data["receivedQty"] !== undefined ? _data["receivedQty"] : <any>null;
             this.salesQty = _data["salesQty"] !== undefined ? _data["salesQty"] : <any>null;
+            this.begQty = _data["begQty"] !== undefined ? _data["begQty"] : <any>null;
             this.currentStocks = _data["currentStocks"] !== undefined ? _data["currentStocks"] : <any>null;
         }
     }
@@ -1324,6 +1326,7 @@ export class CurrentInventoryDto implements ICurrentInventoryDto {
         data["productName"] = this.productName !== undefined ? this.productName : <any>null;
         data["receivedQty"] = this.receivedQty !== undefined ? this.receivedQty : <any>null;
         data["salesQty"] = this.salesQty !== undefined ? this.salesQty : <any>null;
+        data["begQty"] = this.begQty !== undefined ? this.begQty : <any>null;
         data["currentStocks"] = this.currentStocks !== undefined ? this.currentStocks : <any>null;
         return data;
     }
@@ -1333,6 +1336,7 @@ export interface ICurrentInventoryDto {
     productName?: string;
     receivedQty?: number;
     salesQty?: number;
+    begQty?: number;
     currentStocks?: number;
 }
 

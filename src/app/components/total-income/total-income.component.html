@@ -23,7 +23,7 @@
           >-{{ openInvPercentage }}%</span
         >
       </div>
-      <div class="col-6 d-flex align-items-center">
+      <div class="col-6 d-flex align-items-center" *ngIf="active">
         <!-- chart -->
         <apx-chart
           [series]="totalincomeChart.series"

@@ -32,35 +32,36 @@ export interface totalincomeChart {
   imports: [MaterialModule, NgApexchartsModule, CommonModule],
   templateUrl: './total-income.component.html',
 })
-export class AppTotalIncomeComponent implements OnInit{
+export class AppTotalIncomeComponent implements OnInit {
   @ViewChild('chart') chart: ChartComponent = Object.create(null);
+  active = false;
   data: number[] = [];
   openInvTotalSales = 0;
   openInvPercentage = 0;
   public totalincomeChart!: Partial<totalincomeChart> | any;
 
-  constructor(private _salesSerivice: SalesService) {
-    
-  }
+  constructor(private _salesSerivice: SalesService) {}
 
   ngOnInit(): void {
     this._salesSerivice.getTotalSales().subscribe({
-
       next: (res) => {
-        if(res.isSuccess){
+        if (res.isSuccess) {
+          this.active = true;
+
           this.data = res.data.allSalesPercentage ?? [];
           this.openInvTotalSales = res.data.totalSales ?? 0;
           this.openInvPercentage = res.data.salesPercentage ?? 0;
+
           this.constructChart();
         }
       },
       error: (err) => {
         console.error(err);
-      }
+      },
     });
   }
 
-  constructChart(){
+  constructChart() {
     this.totalincomeChart = {
       series: [
         {

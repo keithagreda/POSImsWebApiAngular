@@ -29,6 +29,12 @@ export const navItems: NavItem[] = [
     iconName: 'solar:widget-add-line-duotone',
     route: '/stocks-receiving',
   },
+
+  {
+    displayName: 'Inventory',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/inventory',
+  },
   {
     displayName: 'Test',
     iconName: 'solar:widget-add-line-duotone',

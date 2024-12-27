@@ -27,6 +27,7 @@ export class CurrentStocksComponent implements OnInit {
     'productName',
     'received',
     'sales',
+    'begQty',
     'currentStock',
   ];
   dataSource: CurrentInventoryDto[] = [];
@@ -34,6 +35,10 @@ export class CurrentStocksComponent implements OnInit {
 
   constructor(private _inventoryService: InventoryService) {}
   ngOnInit(): void {
+    this.getCurrentStocks();
+  }
+
+  getCurrentStocks() {
     this.loading = true;
     this._inventoryService.getCurrentStocks().subscribe({
       next: (res) => {

@@ -17,6 +17,7 @@ import {
   AutoCompleteCompleteEvent,
   AutoCompleteModule,
 } from 'primeng/autocomplete';
+import { LoadingService } from 'src/app/services/loading.service';
 
 @Component({
   selector: 'app-create-or-edit-stocks-receiving-modal',
@@ -53,7 +54,8 @@ export class CreateOrEditStocksReceivingModalComponent implements OnInit {
     private _toastr: ToastrService,
     private _stocksReceivingService: StocksService,
     private _productService: ProductService,
-    private _storageLocationService: StorageLocationService
+    private _storageLocationService: StorageLocationService,
+    private _lodingService: LoadingService
   ) {}
   ngOnInit(): void {
     this.getProducts();
@@ -106,6 +108,7 @@ export class CreateOrEditStocksReceivingModalComponent implements OnInit {
   }
 
   save() {
+    this._lodingService.show();
     this.saving = true;
     this.createOrEditReceiveStocks.productId =
       this.selectedProduct != null ? this.selectedProduct.id! : 0;
@@ -115,13 +118,16 @@ export class CreateOrEditStocksReceivingModalComponent implements OnInit {
       .receiveStocks(this.createOrEditReceiveStocks)
       .subscribe({
         next: (res) => {
+          this._lodingService.hide();
           if (res.isSuccess) {
-            this._toastr.success(res.data);
+            this._toastr.success('Stocks receiving created successfully');
             this.saving = false;
             this.closeForm();
+            this.modalSave.emit(null);
           }
         },
         error: (err) => {
+          this._lodingService.hide();
           this.saving = false;
           this._toastr.error(
             'Something went wrong. While creating stocks receiving'

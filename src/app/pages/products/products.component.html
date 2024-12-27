@@ -16,18 +16,14 @@
         <!-- Position Column -->
         <!-- Name Column -->
         <ng-container matColumnDef="price">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-600 mat-subtitle-1 f-s-14"
-          >
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">
             Price
           </th>
 
           <td mat-cell *matCellDef="let element" class="mat-body-1">
             <h6 class="mat-body-1 f-s-16 m-b-4">
               <span class="text-dark f-w-600 text-capitalize"
-                >${{ element.price }}
+                >₱{{ element.price }}
               </span>
             </h6>
           </td>
@@ -67,11 +63,7 @@
         </ng-container>
 
         <ng-container matColumnDef="daysTillExpiration">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-600 mat-subtitle-1 f-s-14"
-          >
+          <th mat-header-cell *matHeaderCellDef class="f-w-600 f-s-14">
             Days Till Expiration
           </th>
           <td mat-cell *matCellDef="let element">
@@ -90,7 +82,7 @@
             Category
           </th>
           <td mat-cell *matCellDef="let element">
-            <span class="f-w-600 p-6 p-y-4">
+            <span class="f-w-600 f-s-14">
               <ng-container *ngFor="let item of element.productCategoriesDto">
                 {{ item.name }}
               </ng-container>
