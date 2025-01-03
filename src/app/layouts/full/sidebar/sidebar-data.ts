@@ -8,32 +8,38 @@ export const navItems: NavItem[] = [
     displayName: 'Dashboard',
     iconName: 'solar:widget-add-line-duotone',
     route: '/dashboard',
+    roles: ['admin'],
   },
   {
     displayName: 'Cashier',
     iconName: 'solar:widget-add-line-duotone',
     route: '/cashier',
+    roles: ['admin', 'cashier'],
   },
   {
     displayName: 'Sales',
     iconName: 'solar:widget-add-line-duotone',
     route: '/sales',
+    roles: ['admin', 'cashier'],
   },
   {
     displayName: 'Products',
     iconName: 'solar:widget-add-line-duotone',
     route: '/products',
+    roles: ['admin', 'cashier', 'inventory'],
   },
   {
     displayName: 'Stocks Receiving',
     iconName: 'solar:widget-add-line-duotone',
     route: '/stocks-receiving',
+    roles: ['admin', 'cashier', 'inventory'],
   },
 
   {
     displayName: 'Inventory',
     iconName: 'solar:widget-add-line-duotone',
     route: '/inventory',
+    roles: ['admin', 'cashier', 'inventory'],
   },
   {
     displayName: 'Test',

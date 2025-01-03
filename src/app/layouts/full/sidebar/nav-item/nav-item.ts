@@ -4,4 +4,5 @@ export interface NavItem {
   iconName?: string;
   navCap?: string;
   route?: string;
+  roles?: string[];
 }

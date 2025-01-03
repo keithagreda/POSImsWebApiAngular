@@ -4,6 +4,7 @@ import {
   importProvidersFrom,
 } from '@angular/core';
 import {
+  HTTP_INTERCEPTORS,
   HttpClient,
   provideHttpClient,
   withInterceptorsFromDi,
@@ -35,9 +36,11 @@ import {
   SalesService,
   StocksService,
   StorageLocationService,
+  UserAuthService,
 } from './services/nswag/nswag.service';
 import { CartService } from './services/cart.service';
 import { LoadingService } from './services/loading.service';
+import { CustomInterceptor } from './services/interceptor/auth-interceptor.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -49,6 +52,7 @@ export const appConfig: ApplicationConfig = {
     CartService,
     InventoryService,
     LoadingService,
+    UserAuthService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,
@@ -70,5 +74,10 @@ export const appConfig: ApplicationConfig = {
       TablerIconsModule.pick(TablerIcons),
       NgScrollbarModule
     ),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: CustomInterceptor,
+      multi: true,
+    },
   ],
 };

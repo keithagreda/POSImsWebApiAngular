@@ -15,6 +15,8 @@ import { TablerIconsModule } from 'angular-tabler-icons';
 import { HeaderComponent } from './header/header.component';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LoadingService } from 'src/app/services/loading.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
+import { NavItem } from './sidebar/nav-item/nav-item';
 
 const MOBILE_VIEW = 'screen and (max-width: 768px)';
 const TABLET_VIEW = 'screen and (min-width: 769px) and (max-width: 1024px)';
@@ -42,6 +44,7 @@ const BELOWMONITOR = 'screen and (max-width: 1023px)';
 export class FullComponent implements OnInit {
   navItems = navItems;
   loading: boolean;
+  filteredNavItem: NavItem[] = [];
 
   @ViewChild('leftsidenav')
   public sidenav: MatSidenav | any;
@@ -60,13 +63,13 @@ export class FullComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private navService: NavService,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private auth: AuthService
   ) {
     this.loadingService.loading$.subscribe((res) => {
       this.loading = res;
     });
     console.log(this.loading);
-
     this.htmlElement = document.querySelector('html')!;
     this.htmlElement.classList.add('light-theme');
     this.layoutChangesSubscription = this.breakpointObserver
@@ -80,10 +83,21 @@ export class FullComponent implements OnInit {
       });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.filteredNavItem = this.getFilteredNavItems();
+  }
 
   ngOnDestroy() {
     this.layoutChangesSubscription.unsubscribe();
+  }
+
+  getFilteredNavItems(): NavItem[] {
+    const userRoles = this.auth.getUserRoles();
+
+    return navItems.filter(
+      (item) =>
+        !item.roles || item.roles.some((role) => userRoles.includes(role))
+    );
   }
 
   toggleCollapsed() {

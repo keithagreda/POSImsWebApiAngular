@@ -239,7 +239,7 @@ export class ProductCategoryService {
     }
 
     addProductCategory(): Observable<FileResponse> {
-        let url_ = this.baseUrl + "/api/ProductCategory";
+        let url_ = this.baseUrl + "/api/ProductCategory/AddProductCategory";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -1204,6 +1204,134 @@ export class StorageLocationService {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
             result200 = ApiResponseOfListOfGetStorageLocationForDropDownDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
+export class UserAuthService {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
+    }
+
+    login(userName: string | undefined, password: string | undefined): Observable<ApiResponseOfUserLoginDto> {
+        let url_ = this.baseUrl + "/api/UserAuth/Login?";
+        if (userName === null)
+            throw new Error("The parameter 'userName' cannot be null.");
+        else if (userName !== undefined)
+            url_ += "UserName=" + encodeURIComponent("" + userName) + "&";
+        if (password === null)
+            throw new Error("The parameter 'password' cannot be null.");
+        else if (password !== undefined)
+            url_ += "Password=" + encodeURIComponent("" + password) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processLogin(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processLogin(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfUserLoginDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfUserLoginDto>;
+        }));
+    }
+
+    protected processLogin(response: HttpResponseBase): Observable<ApiResponseOfUserLoginDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfUserLoginDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    registerUser(userName: string | undefined, password: string | undefined, role: UserRoleEnum | undefined): Observable<ApiResponseOfString> {
+        let url_ = this.baseUrl + "/api/UserAuth/RegisterUser?";
+        if (userName === null)
+            throw new Error("The parameter 'userName' cannot be null.");
+        else if (userName !== undefined)
+            url_ += "UserName=" + encodeURIComponent("" + userName) + "&";
+        if (password === null)
+            throw new Error("The parameter 'password' cannot be null.");
+        else if (password !== undefined)
+            url_ += "Password=" + encodeURIComponent("" + password) + "&";
+        if (role === null)
+            throw new Error("The parameter 'role' cannot be null.");
+        else if (role !== undefined)
+            url_ += "Role=" + encodeURIComponent("" + role) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRegisterUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRegisterUser(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfString>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfString>;
+        }));
+    }
+
+    protected processRegisterUser(response: HttpResponseBase): Observable<ApiResponseOfString> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfString.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -3398,6 +3526,137 @@ export class GetStorageLocationForDropDownDto implements IGetStorageLocationForD
 export interface IGetStorageLocationForDropDownDto {
     id?: number;
     name?: string;
+}
+
+export class ApiResponseOfUserLoginDto implements IApiResponseOfUserLoginDto {
+    data!: UserLoginDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfUserLoginDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new UserLoginDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? UserLoginDto.fromJS(_data["data"]) : new UserLoginDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfUserLoginDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfUserLoginDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfUserLoginDto {
+    data: UserLoginDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class UserLoginDto implements IUserLoginDto {
+    userId?: string;
+    userName?: string;
+    userToken?: string;
+    newRefreshToken?: string;
+    userRole?: string[];
+
+    constructor(data?: IUserLoginDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"] !== undefined ? _data["userId"] : <any>null;
+            this.userName = _data["userName"] !== undefined ? _data["userName"] : <any>null;
+            this.userToken = _data["userToken"] !== undefined ? _data["userToken"] : <any>null;
+            this.newRefreshToken = _data["newRefreshToken"] !== undefined ? _data["newRefreshToken"] : <any>null;
+            if (Array.isArray(_data["userRole"])) {
+                this.userRole = [] as any;
+                for (let item of _data["userRole"])
+                    this.userRole!.push(item);
+            }
+            else {
+                this.userRole = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): UserLoginDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new UserLoginDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId !== undefined ? this.userId : <any>null;
+        data["userName"] = this.userName !== undefined ? this.userName : <any>null;
+        data["userToken"] = this.userToken !== undefined ? this.userToken : <any>null;
+        data["newRefreshToken"] = this.newRefreshToken !== undefined ? this.newRefreshToken : <any>null;
+        if (Array.isArray(this.userRole)) {
+            data["userRole"] = [];
+            for (let item of this.userRole)
+                data["userRole"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IUserLoginDto {
+    userId?: string;
+    userName?: string;
+    userToken?: string;
+    newRefreshToken?: string;
+    userRole?: string[];
+}
+
+export enum UserRoleEnum {
+    Admin = 0,
+    Cashier = 1,
+    Inventory = 2,
 }
 
 export interface FileResponse {
