@@ -28,7 +28,9 @@ export class AuthService {
     this.token = localStorage.getItem('token');
     if (this.token) {
       const decoded: any = jwtDecode(this.token);
-
+      console.log(
+        decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']
+      );
       return (
         decoded[
           'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
