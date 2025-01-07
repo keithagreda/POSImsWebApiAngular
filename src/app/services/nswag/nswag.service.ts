@@ -321,7 +321,9 @@ export class ProductCategoryService {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:7050';
+    this.baseUrl =
+      baseUrl ??
+      'http://posimswebapi-dev.eba-y23ypj7i.ap-southeast-1.elasticbeanstalk.com';
   }
 
   getProductCategory(): Observable<ApiResponseOfIListOfProductCategoryDto> {
@@ -516,7 +518,9 @@ export class ProductService {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:7050';
+    this.baseUrl =
+      baseUrl ??
+      'http://posimswebapi-dev.eba-y23ypj7i.ap-southeast-1.elasticbeanstalk.com';
   }
 
   createProduct(input: CreateProductDto): Observable<ApiResponseOfString> {
@@ -1146,7 +1150,9 @@ export class SalesService {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:7050';
+    this.baseUrl =
+      baseUrl ??
+      'http://posimswebapi-dev.eba-y23ypj7i.ap-southeast-1.elasticbeanstalk.com';
   }
 
   getSales(
@@ -1608,7 +1614,9 @@ export class StocksService {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:7050';
+    this.baseUrl =
+      baseUrl ??
+      'http://posimswebapi-dev.eba-y23ypj7i.ap-southeast-1.elasticbeanstalk.com';
   }
 
   receiveStocks(
@@ -1881,7 +1889,9 @@ export class StorageLocationService {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:7050';
+    this.baseUrl =
+      baseUrl ??
+      'http://posimswebapi-dev.eba-y23ypj7i.ap-southeast-1.elasticbeanstalk.com';
   }
 
   createStorageLocation(
@@ -2084,7 +2094,9 @@ export class UserAuthService {
     @Optional() @Inject(API_BASE_URL) baseUrl?: string
   ) {
     this.http = http;
-    this.baseUrl = baseUrl ?? 'https://localhost:7050';
+    this.baseUrl =
+      baseUrl ??
+      'http://posimswebapi-dev.eba-y23ypj7i.ap-southeast-1.elasticbeanstalk.com';
   }
 
   login(
