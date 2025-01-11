@@ -1,25 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
-import { MaterialModule } from 'src/app/material.module';
-import { CartService } from 'src/app/services/cart.service';
 import { SidebarModule } from 'primeng/sidebar';
+import { MaterialModule } from 'src/app/material.module';
 import {
-  CreateOrEditSalesV1Dto,
-  CreateSalesDetailV1Dto,
-  CurrentInventoryDto,
   EntityHistoryDto,
   EntityHistoryService,
-  GetProductDropDownTableDto,
-  ProductService,
-  SalesService,
 } from 'src/app/services/nswag/nswag.service';
-import { ToastrService } from 'ngx-toastr';
-import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-test-component',
+  selector: 'app-entity-history',
   standalone: true,
   imports: [
     MaterialModule,
@@ -28,10 +19,10 @@ import Swal from 'sweetalert2';
     DialogModule,
     SidebarModule,
   ],
-  templateUrl: './test-component.component.html',
-  styleUrl: './test-component.component.scss',
+  templateUrl: './entity-history.component.html',
+  styleUrl: './entity-history.component.scss',
 })
-export class TestComponentComponent implements OnInit {
+export class EntityHistoryComponent {
   displayedColumns: string[] = [
     'entityname',
     'action',
@@ -42,13 +33,7 @@ export class TestComponentComponent implements OnInit {
   loading = false;
   dataSource: EntityHistoryDto[] = [];
   filterText = '';
-  constructor(
-    private _productService: ProductService,
-    private _cartService: CartService,
-    private _toastr: ToastrService,
-    private _salesService: SalesService,
-    private _entityHistoryService: EntityHistoryService
-  ) {}
+  constructor(private _entityHistoryService: EntityHistoryService) {}
   ngOnInit(): void {
     this.getEntityHistory();
   }

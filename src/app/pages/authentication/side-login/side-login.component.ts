@@ -10,6 +10,8 @@ import { Router, RouterModule } from '@angular/router';
 import { MaterialModule } from '../../../material.module';
 import { MatButtonModule } from '@angular/material/button';
 import { UserAuthService } from 'src/app/services/nswag/nswag.service';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-side-login',
@@ -24,8 +26,13 @@ import { UserAuthService } from 'src/app/services/nswag/nswag.service';
   templateUrl: './side-login.component.html',
 })
 export class AppSideLoginComponent {
-  constructor(private router: Router, private userAuth: UserAuthService) {}
-
+  saving = false;
+  constructor(
+    private router: Router,
+    private userAuth: UserAuthService,
+    private authService: AuthService,
+    private toastr: ToastrService
+  ) {}
   form = new FormGroup({
     uname: new FormControl('', [Validators.required, Validators.minLength(6)]),
     password: new FormControl('', [Validators.required]),
@@ -36,15 +43,34 @@ export class AppSideLoginComponent {
   }
 
   login() {
+    this.saving = true;
     // console.log(this.form.value);
     this.userAuth
       .login(this.form.value.uname ?? '', this.form.value.password ?? '')
-      .subscribe((res) => {
-        if (res.isSuccess) {
-          localStorage.setItem('token', res.data.userToken ?? '');
-          this.router.navigate(['/dashboard']);
-          console.log(res.data);
-        }
+      .subscribe({
+        next: (res) => {
+          this.saving = false;
+          if (res.isSuccess) {
+            localStorage.setItem('token', res.data.userToken ?? '');
+            const userRoles = this.authService.getUserRoles();
+            debugger;
+            if (userRoles.includes('Admin')) {
+              this.router.navigate(['/dashboard']);
+            } else if (userRoles.includes('Cashier')) {
+              this.router.navigate(['/cashier']);
+            } else if (userRoles.includes('Inventory')) {
+              this.router.navigate(['/inventory']);
+            }
+            // this.router.navigate(['/dashboard']);
+            this.toastr.success('Login Successful');
+          }
+          if (!res.isSuccess) {
+            this.toastr.error('Error! ' + res.message);
+          }
+        },
+        error: (err) => {
+          this.saving = false;
+        },
       });
     // this.router.navigate(['/']);
   }
