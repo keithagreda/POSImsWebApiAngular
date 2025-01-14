@@ -140,7 +140,7 @@
       *ngIf="cartItem.length > 0"
       mat-flat-button
       color="primary"
-      (click)="saveTransaction()"
+      (click)="insertCustomer()"
     >
       Save Transaction
     </button>
@@ -150,3 +150,44 @@
     >
   </div>
 </p-sidebar>
+
+<p-dialog
+  header="Customer Name"
+  [(visible)]="visible"
+  [modal]="true"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [appendTo]="'body'"
+  (onHide)="closeForm()"
+>
+  <p-autoComplete
+    styleClass="w-100 dropdown-style"
+    [(ngModel)]="customerName"
+    [dropdown]="true"
+    [suggestions]="customerNames"
+    (completeMethod)="filterProduct($event)"
+    name="customerName"
+    placeholder="Customer Name"
+  />
+  <!-- <mat-form-field appearance="outline" class="w-100" color="primary">
+    
+    <input
+      matInput
+      name="customerName"
+      id="customerName"
+      [(ngModel)]="customerName"
+      placeholder="CustomerName"
+      type="text"
+    />
+  </mat-form-field> -->
+  <button
+    *ngIf="cartItem.length > 0"
+    mat-flat-button
+    color="primary"
+    (click)="saveTransaction()"
+  >
+    Save Transaction
+  </button>
+</p-dialog>

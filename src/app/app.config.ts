@@ -30,6 +30,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 import {
+  CustomerService,
   EntityHistoryService,
   InventoryService,
   ProductCategoryService,
@@ -55,6 +56,7 @@ export const appConfig: ApplicationConfig = {
     LoadingService,
     UserAuthService,
     EntityHistoryService,
+    CustomerService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(
       routes,

@@ -69,6 +69,7 @@ export class AppSideLoginComponent {
           }
         },
         error: (err) => {
+          this.toastr.error('Error! ' + err.message);
           this.saving = false;
         },
       });

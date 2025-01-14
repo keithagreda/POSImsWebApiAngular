@@ -16,6 +16,72 @@ import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angula
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
 @Injectable()
+export class CustomerService {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ?? "https://localhost:7050";
+    }
+
+    customerDropDown(filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfCustomerDropDownDto> {
+        let url_ = this.baseUrl + "/api/Customer?";
+        if (filterText !== undefined && filterText !== null)
+            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
+        if (pageNumber !== undefined && pageNumber !== null)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize !== undefined && pageSize !== null)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCustomerDropDown(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCustomerDropDown(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfPaginatedResultOfCustomerDropDownDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfPaginatedResultOfCustomerDropDownDto>;
+        }));
+    }
+
+    protected processCustomerDropDown(response: HttpResponseBase): Observable<ApiResponseOfPaginatedResultOfCustomerDropDownDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfPaginatedResultOfCustomerDropDownDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+}
+
+@Injectable()
 export class EntityHistoryService {
     private http: HttpClient;
     private baseUrl: string;
@@ -1407,6 +1473,171 @@ export class UserAuthService {
         }
         return _observableOf(null as any);
     }
+}
+
+export class ApiResponseOfPaginatedResultOfCustomerDropDownDto implements IApiResponseOfPaginatedResultOfCustomerDropDownDto {
+    data!: PaginatedResultOfCustomerDropDownDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfPaginatedResultOfCustomerDropDownDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new PaginatedResultOfCustomerDropDownDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? PaginatedResultOfCustomerDropDownDto.fromJS(_data["data"]) : new PaginatedResultOfCustomerDropDownDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfPaginatedResultOfCustomerDropDownDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfPaginatedResultOfCustomerDropDownDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfPaginatedResultOfCustomerDropDownDto {
+    data: PaginatedResultOfCustomerDropDownDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PaginatedResultOfCustomerDropDownDto implements IPaginatedResultOfCustomerDropDownDto {
+    items?: CustomerDropDownDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+
+    constructor(data?: IPaginatedResultOfCustomerDropDownDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(CustomerDropDownDto.fromJS(item));
+            }
+            else {
+                this.items = <any>null;
+            }
+            this.totalCount = _data["totalCount"] !== undefined ? _data["totalCount"] : <any>null;
+            this.totalPages = _data["totalPages"] !== undefined ? _data["totalPages"] : <any>null;
+            this.currentPage = _data["currentPage"] !== undefined ? _data["currentPage"] : <any>null;
+            this.pageSize = _data["pageSize"] !== undefined ? _data["pageSize"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PaginatedResultOfCustomerDropDownDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResultOfCustomerDropDownDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount !== undefined ? this.totalCount : <any>null;
+        data["totalPages"] = this.totalPages !== undefined ? this.totalPages : <any>null;
+        data["currentPage"] = this.currentPage !== undefined ? this.currentPage : <any>null;
+        data["pageSize"] = this.pageSize !== undefined ? this.pageSize : <any>null;
+        return data;
+    }
+}
+
+export interface IPaginatedResultOfCustomerDropDownDto {
+    items?: CustomerDropDownDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+}
+
+export class CustomerDropDownDto implements ICustomerDropDownDto {
+    id?: string;
+    customerFullName?: string;
+
+    constructor(data?: ICustomerDropDownDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.customerFullName = _data["customerFullName"] !== undefined ? _data["customerFullName"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): CustomerDropDownDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomerDropDownDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["customerFullName"] = this.customerFullName !== undefined ? this.customerFullName : <any>null;
+        return data;
+    }
+}
+
+export interface ICustomerDropDownDto {
+    id?: string;
+    customerFullName?: string;
 }
 
 export class ApiResponseOfPaginatedResultOfEntityHistoryDto implements IApiResponseOfPaginatedResultOfEntityHistoryDto {
@@ -3021,7 +3252,7 @@ export interface ITransNumReaderDto {
 
 export class CreateOrEditSalesV1Dto implements ICreateOrEditSalesV1Dto {
     salesHeaderId?: string | null;
-    customerId?: string | null;
+    customerName?: string;
     createSalesDetailV1Dto?: CreateSalesDetailV1Dto[];
 
     constructor(data?: ICreateOrEditSalesV1Dto) {
@@ -3036,7 +3267,7 @@ export class CreateOrEditSalesV1Dto implements ICreateOrEditSalesV1Dto {
     init(_data?: any) {
         if (_data) {
             this.salesHeaderId = _data["salesHeaderId"] !== undefined ? _data["salesHeaderId"] : <any>null;
-            this.customerId = _data["customerId"] !== undefined ? _data["customerId"] : <any>null;
+            this.customerName = _data["customerName"] !== undefined ? _data["customerName"] : <any>null;
             if (Array.isArray(_data["createSalesDetailV1Dto"])) {
                 this.createSalesDetailV1Dto = [] as any;
                 for (let item of _data["createSalesDetailV1Dto"])
@@ -3058,7 +3289,7 @@ export class CreateOrEditSalesV1Dto implements ICreateOrEditSalesV1Dto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["salesHeaderId"] = this.salesHeaderId !== undefined ? this.salesHeaderId : <any>null;
-        data["customerId"] = this.customerId !== undefined ? this.customerId : <any>null;
+        data["customerName"] = this.customerName !== undefined ? this.customerName : <any>null;
         if (Array.isArray(this.createSalesDetailV1Dto)) {
             data["createSalesDetailV1Dto"] = [];
             for (let item of this.createSalesDetailV1Dto)
@@ -3070,7 +3301,7 @@ export class CreateOrEditSalesV1Dto implements ICreateOrEditSalesV1Dto {
 
 export interface ICreateOrEditSalesV1Dto {
     salesHeaderId?: string | null;
-    customerId?: string | null;
+    customerName?: string;
     createSalesDetailV1Dto?: CreateSalesDetailV1Dto[];
 }
 

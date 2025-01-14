@@ -9,11 +9,16 @@ import { CartService } from 'src/app/services/cart.service';
 import {
   CreateOrEditSalesV1Dto,
   CreateSalesDetailV1Dto,
+  CustomerDropDownDto,
+  CustomerService,
   GetProductDropDownTableDto,
   ProductService,
   SalesService,
 } from 'src/app/services/nswag/nswag.service';
 import Swal from 'sweetalert2';
+
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { C } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-cashier',
@@ -24,6 +29,7 @@ import Swal from 'sweetalert2';
     FormsModule,
     DialogModule,
     SidebarModule,
+    AutoCompleteModule,
   ],
   templateUrl: './cashier.component.html',
   styleUrl: './cashier.component.scss',
@@ -36,15 +42,21 @@ export class CashierComponent implements OnInit {
   cartItem: CreateSalesDetailV1Dto[] = [];
   product: CreateSalesDetailV1Dto = new CreateSalesDetailV1Dto();
   selectedProduct: CreateSalesDetailV1Dto = new CreateSalesDetailV1Dto();
+  visible = false;
+  customerName = '';
+  customerNames: string[] = [];
+  filterCustomerName: string = '';
   constructor(
     private _productService: ProductService,
     private _cartService: CartService,
+    private _customerService: CustomerService,
     private _toastr: ToastrService,
     private _salesService: SalesService
   ) {}
   ngOnInit(): void {
     this.getProducts();
     this.getCartItem();
+    this.getCustomerNames();
   }
 
   getProducts() {
@@ -55,6 +67,38 @@ export class CashierComponent implements OnInit {
           this.items = res.data.items ?? [];
         }
       });
+  }
+
+  getCustomerNames() {
+    this._customerService
+      .customerDropDown(this.filterCustomerName, null, null)
+      .subscribe({
+        next: (res) => {
+          if (res.isSuccess) {
+            this.customerNames = [];
+            res.data.items?.map((item) => {
+              this.customerNames.push(item.customerFullName ?? '');
+            });
+            console.log(this.customerNames);
+          }
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
+  }
+
+  filterProduct(event: any) {
+    this.getCustomerNames();
+  }
+
+  onCustomerSelect() {
+    this.customerName = this.filterCustomerName ?? '';
+    console.log(this.customerName);
+  }
+
+  closeForm() {
+    this.visible = false;
   }
 
   placeOrder() {
@@ -87,7 +131,7 @@ export class CashierComponent implements OnInit {
 
     const salesDto = CreateOrEditSalesV1Dto.fromJS({
       salesHeaderId: null,
-      customerId: null,
+      customerName: this.customerName,
       createSalesDetailV1Dto: createSalesDetailV1Dto,
     });
 
@@ -113,6 +157,7 @@ export class CashierComponent implements OnInit {
   }
 
   saveTransaction() {
+    this.visible = false;
     this.sideBarVisible2 = false;
     Swal.fire({
       title: 'Are you sure?',
@@ -130,6 +175,10 @@ export class CashierComponent implements OnInit {
         this.placeOrder();
       }
     });
+  }
+
+  insertCustomer() {
+    this.visible = true;
   }
 
   getCartItem() {
