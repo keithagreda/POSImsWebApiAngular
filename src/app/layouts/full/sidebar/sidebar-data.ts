@@ -11,12 +11,7 @@ export const navItems: NavItem[] = [
     roles: ['Admin'],
   },
 
-  {
-    displayName: 'Entity History',
-    iconName: 'solar:widget-add-line-duotone',
-    route: '/entity-history',
-    roles: ['Admin'],
-  },
+  
   {
     displayName: 'Cashier',
     iconName: 'solar:widget-add-line-duotone',
@@ -52,6 +47,12 @@ export const navItems: NavItem[] = [
     displayName: 'Test',
     iconName: 'solar:widget-add-line-duotone',
     route: '/test',
+    roles: ['Admin'],
+  },
+  {
+    displayName: 'Entity History',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/entity-history',
     roles: ['Admin'],
   },
   {
@@ -134,4 +135,5 @@ export const navItems: NavItem[] = [
     route: '/extra/sample-page',
     roles: ['Admin'],
   },
+
 ];

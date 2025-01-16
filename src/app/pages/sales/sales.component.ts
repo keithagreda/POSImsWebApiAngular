@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { DialogModule } from 'primeng/dialog';
 import { MaterialModule } from 'src/app/material.module';
@@ -7,16 +7,20 @@ import {
   SalesHeaderDto,
   SalesService,
 } from 'src/app/services/nswag/nswag.service';
+import { ViewSalesDetailsComponent } from './view-sales-details/view-sales-details.component';
 
 @Component({
   selector: 'app-sales',
   standalone: true,
-  imports: [DialogModule, CommonModule, MaterialModule],
+  imports: [DialogModule, CommonModule, MaterialModule, ViewSalesDetailsComponent],
   templateUrl: './sales.component.html',
   styleUrl: './sales.component.scss',
 })
 export class SalesComponent implements OnInit {
+   @ViewChild(ViewSalesDetailsComponent)
+   viewSalesDetailsComponent!: ViewSalesDetailsComponent;
   salesHeadersDto: SalesHeaderDto[] = [];
+  visible = false;
   displayedColumns1: string[] = [
     'transNum',
     'customerName',
@@ -33,6 +37,10 @@ export class SalesComponent implements OnInit {
     this.getSales();
   }
 
+  closeForm(){
+    this.visible = false
+  }
+
   getSales() {
     this._salesService.getSales(null, null, null, null, null).subscribe({
       next: (res) => {
@@ -44,5 +52,10 @@ export class SalesComponent implements OnInit {
         console.error(err);
       },
     });
+  }
+
+  showSalesDetails(){
+    this.visible =true;
+    this.viewSalesDetailsComponent.show();
   }
 }

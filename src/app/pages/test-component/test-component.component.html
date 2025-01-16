@@ -3,101 +3,74 @@
     <!-- <p-progressSpinner ariaLabel="loading" /> -->
   </div>
   <mat-card-content *ngIf="!loading">
-    <mat-card-title>Current stocks by Product</mat-card-title>
+    <mat-card-title>Sales details</mat-card-title>
+  
 
-    <div class="table-responsive">
-      <table mat-table [dataSource]="dataSource" class="w-100">
-        <!-- Profile Column -->
-        <ng-container matColumnDef="entityname">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-400 mat-subtitle-1 f-s-14 p-l-0"
-          >
-            Name
-          </th>
-          <td mat-cell *matCellDef="let element" class="p-l-0">
-            <div class="d-flex align-items-center">
-              <!-- <img
-                    [src]="element.imagePath"
-                    alt="users"
-                    width="48"
-                    class="rounded"
-                  /> -->
-              <div class="m-l-12">
-                <h6 class="mat-subtitle-1 text-truncate-2 f-s-15 f-w-600">
-                  {{ element.entityName }}
-                </h6>
-                <span class="f-s-14 mat-body-1">{{ element.position }}</span>
-              </div>
-            </div>
-          </td>
-        </ng-container>
+    <div class="col-lg-4 col-sm-6">
+      <div class="sales-card">
+        <div class="sales-header">
+          <h3 class="s-header-title"> #T-2024-22-1-1</h3>
+          <h3 class="s-header-title"> January 22, 2024 5PM</h3>
+        </div>
 
-        <!-- Hour Rate Column -->
-        <ng-container matColumnDef="action">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-400 mat-subtitle-1 f-s-14"
-          >
-            Action
-          </th>
-          <td mat-cell *matCellDef="let element" class="mat-body-1">
-            <span class="f-w-600 f-s-14">{{ element.action }}</span>
-          </td>
-        </ng-container>
+        <div *ngIf="isMobile" class="sales-content mobile">
+          <div class="sales-item">
+            <h3>ICE BLOCK</h3>
+            <p> <span>Quantity</span>: 5pcs</p>
+            <p> <span>Rate</span>: ₱100</p>
+            <p> <span>Amount</span>: ₱500</p>
+            <hr>
+          </div>
+          
+          <div class="sales-summary">
+            <span>TOTAL: ₱500</span>
+            <span>Discount: 0%</span>
+          </div>
+          
+        </div>
 
-        <!-- Symbol Column -->
-        <ng-container matColumnDef="changes">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-400 mat-subtitle-1 f-s-14"
-          >
-            Changes
-          </th>
-          <td mat-cell *matCellDef="let element">
-            <!-- <span
-                  class="bg-light-{{ element.progress }} text-{{
-                    element.progress
-                  }} rounded-sm f-w-600 p-6 p-y-4 f-s-12"
-                >
-                </span> -->
-            {{ element.changes }}
-          </td>
-        </ng-container>
 
-        <ng-container matColumnDef="changeTime">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-400 mat-subtitle-1 f-s-14"
-          >
-            Time
-          </th>
-          <td mat-cell *matCellDef="let element">
-            <span class="f-s-14">{{ element.changeTime }}</span>
-          </td>
-        </ng-container>
-
-        <!-- Weight Column -->
-        <ng-container matColumnDef="changedBy">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="f-w-400 mat-subtitle-1 f-s-14"
-          >
-            Changed By
-          </th>
-          <td mat-cell *matCellDef="let element">
-            <span class="f-s-14">{{ element.changedBy }}</span>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
+        <div *ngIf="!isMobile" class="sales-content not-mobile">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Quantity</th>
+                <th>Rate</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="item">
+                    ICE BLOCK
+                  </span>
+                  
+                </td>
+                <td>5pcs</td>
+                <td>₱100</td>
+                <td>₱500</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="sales-summary">
+            <span>TOTAL: ₱500</span>
+            <span>Discount: 0%</span>
+          </div>
+        </div>
+      </div>
+      <!-- <mat-card class="cardWithShadow">
+        <mat-card-content>
+          <mat-card-title class="sales-detail-header">
+            ORDER:
+          </mat-card-title>
+          dawdaw
+        </mat-card-content>
+      </mat-card> -->
     </div>
+    
+    
+    
   </mat-card-content>
 </mat-card>

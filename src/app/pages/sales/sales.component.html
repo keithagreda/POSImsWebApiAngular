@@ -106,6 +106,10 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
+              <button mat-menu-item (click)="showSalesDetails()">
+                <mat-icon > more_horiz</mat-icon>
+                <span>View More</span>
+              </button>
               <!-- <button mat-menu-item (click)="editTransaction(element.id)">
                   <mat-icon>edit</mat-icon>
                   <span>Edit</span>
@@ -140,3 +144,16 @@
   [appendTo]="'body'"
   (onHide)="closeForm()"
 ></p-dialog> -->
+<p-dialog
+  header="View Sales Details"
+  [(visible)]="visible"
+  [modal]="true"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [appendTo]="'body'"
+  (onHide)="closeForm()"
+>
+    <app-view-sales-details></app-view-sales-details>
+</p-dialog>

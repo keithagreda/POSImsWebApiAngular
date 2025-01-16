@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { MaterialModule } from 'src/app/material.module';
@@ -42,6 +42,7 @@ export class TestComponentComponent implements OnInit {
   loading = false;
   dataSource: EntityHistoryDto[] = [];
   filterText = '';
+  isMobile = false;
   constructor(
     private _productService: ProductService,
     private _cartService: CartService,
@@ -51,6 +52,7 @@ export class TestComponentComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.getEntityHistory();
+    this.checkScreenSize();
   }
 
   getEntityHistory() {
@@ -67,5 +69,15 @@ export class TestComponentComponent implements OnInit {
           console.error(err);
         },
       });
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.checkScreenSize(); // Check screen size on resize
+  }
+
+  checkScreenSize(): void{
+    this.isMobile = window.matchMedia(('(max-width: 410px)')).matches
+    console.log(this.isMobile);
   }
 }
