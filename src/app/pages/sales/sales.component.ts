@@ -7,18 +7,23 @@ import {
   SalesHeaderDto,
   SalesService,
 } from 'src/app/services/nswag/nswag.service';
-import { ViewSalesDetailsComponent } from './view-sales-details/view-sales-details.component';
+import { ViewSalesDetailsComponent } from '../../components/view-sales-details/view-sales-details.component';
 
 @Component({
   selector: 'app-sales',
   standalone: true,
-  imports: [DialogModule, CommonModule, MaterialModule, ViewSalesDetailsComponent],
+  imports: [
+    DialogModule,
+    CommonModule,
+    MaterialModule,
+    ViewSalesDetailsComponent,
+  ],
   templateUrl: './sales.component.html',
   styleUrl: './sales.component.scss',
 })
 export class SalesComponent implements OnInit {
-   @ViewChild(ViewSalesDetailsComponent)
-   viewSalesDetailsComponent!: ViewSalesDetailsComponent;
+  @ViewChild(ViewSalesDetailsComponent)
+  viewSalesDetailsComponent!: ViewSalesDetailsComponent;
   salesHeadersDto: SalesHeaderDto[] = [];
   visible = false;
   displayedColumns1: string[] = [
@@ -37,8 +42,8 @@ export class SalesComponent implements OnInit {
     this.getSales();
   }
 
-  closeForm(){
-    this.visible = false
+  closeForm() {
+    this.visible = false;
   }
 
   getSales() {
@@ -54,8 +59,8 @@ export class SalesComponent implements OnInit {
     });
   }
 
-  showSalesDetails(){
-    this.visible =true;
+  showSalesDetails() {
+    this.visible = true;
     this.viewSalesDetailsComponent.show();
   }
 }

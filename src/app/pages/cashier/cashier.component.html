@@ -9,7 +9,7 @@
     <div class="flex-container">
       <div class="row">
         <ng-container *ngFor="let item of items">
-          <div class="col-lg-4 col-sm-6">
+          <div class="col-lg-4 col-sm-6 m-b-20">
             <mat-card
               class="b-1 shadow-none item-box"
               (click)="showControl(item, items)"
@@ -68,6 +68,9 @@
     </div>
   </mat-card-content>
 </mat-card>
+
+<app-view-sales-details></app-view-sales-details>
+
 <!-- add to cart -->
 
 <p-sidebar
@@ -168,6 +171,7 @@
     [dropdown]="true"
     [suggestions]="customerNames"
     (completeMethod)="filterProduct($event)"
+    [appendTo]="'body'"
     name="customerName"
     placeholder="Customer Name"
   />

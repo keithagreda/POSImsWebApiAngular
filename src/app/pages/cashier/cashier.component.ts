@@ -18,7 +18,7 @@ import {
 import Swal from 'sweetalert2';
 
 import { AutoCompleteModule } from 'primeng/autocomplete';
-import { C } from '@angular/cdk/keycodes';
+import { ViewSalesDetailsComponent } from 'src/app/components/view-sales-details/view-sales-details.component';
 
 @Component({
   selector: 'app-cashier',
@@ -30,6 +30,7 @@ import { C } from '@angular/cdk/keycodes';
     DialogModule,
     SidebarModule,
     AutoCompleteModule,
+    ViewSalesDetailsComponent,
   ],
   templateUrl: './cashier.component.html',
   styleUrl: './cashier.component.scss',

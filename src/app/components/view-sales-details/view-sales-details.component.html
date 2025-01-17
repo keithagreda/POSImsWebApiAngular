@@ -1,4 +1,4 @@
-<mat-card class="cardWithShadow" *ngIf="false">
+<mat-card class="cardWithShadow">
   <div class="loading" *ngIf="loading">
     <!-- <p-progressSpinner ariaLabel="loading" /> -->
   </div>
@@ -15,7 +15,7 @@
             <div class="sales-header">
               <h3 class="s-header-title">#{{ item.transNum }}</h3>
               <h3 class="s-header-title">
-                {{ item.transDate }}
+                {{ item.transDate | date : "medium" }}
               </h3>
             </div>
 
@@ -35,17 +35,17 @@
                 </div>
               </ng-container>
               <!-- <div class="sales-item">
-                    <h3>ICE BLOCK</h3>
-                    <p> <span>Quantity</span>: 5pcs</p>
-                    <p> <span>Rate</span>: ₱100</p>
-                    <p> <span>Amount</span>: ₱500</p>
-                    <hr>
-                  </div>
-                  
-                  <div class="sales-summary">
-                    <span>TOTAL: ₱500</span>
-                    <span>Discount: 0%</span>
-                  </div> -->
+                      <h3>ICE BLOCK</h3>
+                      <p> <span>Quantity</span>: 5pcs</p>
+                      <p> <span>Rate</span>: ₱100</p>
+                      <p> <span>Amount</span>: ₱500</p>
+                      <hr>
+                    </div>
+                    
+                    <div class="sales-summary">
+                      <span>TOTAL: ₱500</span>
+                      <span>Discount: 0%</span>
+                    </div> -->
             </div>
 
             <div *ngIf="!isMobile" class="sales-content not-mobile">
@@ -79,13 +79,13 @@
             </div>
           </div>
           <!-- <mat-card class="cardWithShadow">
-              <mat-card-content>
-                <mat-card-title class="sales-detail-header">
-                  ORDER:
-                </mat-card-title>
-                dawdaw
-              </mat-card-content>
-            </mat-card> -->
+                <mat-card-content>
+                  <mat-card-title class="sales-detail-header">
+                    ORDER:
+                  </mat-card-title>
+                  dawdaw
+                </mat-card-content>
+              </mat-card> -->
         </div>
       </div>
     </div>

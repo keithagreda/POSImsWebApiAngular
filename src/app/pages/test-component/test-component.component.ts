@@ -14,6 +14,7 @@ import {
   GetProductDropDownTableDto,
   ProductService,
   SalesService,
+  ViewSalesHeaderDto,
 } from 'src/app/services/nswag/nswag.service';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
@@ -43,6 +44,7 @@ export class TestComponentComponent implements OnInit {
   dataSource: EntityHistoryDto[] = [];
   filterText = '';
   isMobile = false;
+  viewSalesHeaderDto: ViewSalesHeaderDto[] = [];
   constructor(
     private _productService: ProductService,
     private _cartService: CartService,
@@ -51,7 +53,8 @@ export class TestComponentComponent implements OnInit {
     private _entityHistoryService: EntityHistoryService
   ) {}
   ngOnInit(): void {
-    this.getEntityHistory();
+    // this.getEntityHistory();
+    this.viewSales();
     this.checkScreenSize();
   }
 
@@ -76,8 +79,20 @@ export class TestComponentComponent implements OnInit {
     this.checkScreenSize(); // Check screen size on resize
   }
 
-  checkScreenSize(): void{
-    this.isMobile = window.matchMedia(('(max-width: 410px)')).matches
+  checkScreenSize(): void {
+    this.isMobile = window.matchMedia('(max-width: 410px)').matches;
     console.log(this.isMobile);
+  }
+
+  viewSales() {
+    this._salesService.viewSales(this.filterText, null, null).subscribe({
+      next: (res) => {
+        if (res.isSuccess) {
+          console.log(res.data);
+          this.viewSalesHeaderDto = res.data.items ?? [];
+        }
+      },
+      error: (err) => {},
+    });
   }
 }

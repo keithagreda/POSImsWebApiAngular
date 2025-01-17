@@ -1065,6 +1065,60 @@ export class SalesService {
         }
         return _observableOf(null as any);
     }
+
+    viewSales(filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto> {
+        let url_ = this.baseUrl + "/api/Sales/ViewSales?";
+        if (filterText !== undefined && filterText !== null)
+            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
+        if (pageNumber !== undefined && pageNumber !== null)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize !== undefined && pageSize !== null)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processViewSales(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processViewSales(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto>;
+        }));
+    }
+
+    protected processViewSales(response: HttpResponseBase): Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfPaginatedResultOfViewSalesHeaderDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
 }
 
 @Injectable()
@@ -3541,6 +3595,242 @@ export interface IPerMonthSalesDto {
     year?: string;
     salesPercentage?: number;
     totalMonthlySales?: number;
+}
+
+export class ApiResponseOfPaginatedResultOfViewSalesHeaderDto implements IApiResponseOfPaginatedResultOfViewSalesHeaderDto {
+    data!: PaginatedResultOfViewSalesHeaderDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfPaginatedResultOfViewSalesHeaderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new PaginatedResultOfViewSalesHeaderDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? PaginatedResultOfViewSalesHeaderDto.fromJS(_data["data"]) : new PaginatedResultOfViewSalesHeaderDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfPaginatedResultOfViewSalesHeaderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfPaginatedResultOfViewSalesHeaderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfPaginatedResultOfViewSalesHeaderDto {
+    data: PaginatedResultOfViewSalesHeaderDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PaginatedResultOfViewSalesHeaderDto implements IPaginatedResultOfViewSalesHeaderDto {
+    items?: ViewSalesHeaderDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+
+    constructor(data?: IPaginatedResultOfViewSalesHeaderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(ViewSalesHeaderDto.fromJS(item));
+            }
+            else {
+                this.items = <any>null;
+            }
+            this.totalCount = _data["totalCount"] !== undefined ? _data["totalCount"] : <any>null;
+            this.totalPages = _data["totalPages"] !== undefined ? _data["totalPages"] : <any>null;
+            this.currentPage = _data["currentPage"] !== undefined ? _data["currentPage"] : <any>null;
+            this.pageSize = _data["pageSize"] !== undefined ? _data["pageSize"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PaginatedResultOfViewSalesHeaderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResultOfViewSalesHeaderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount !== undefined ? this.totalCount : <any>null;
+        data["totalPages"] = this.totalPages !== undefined ? this.totalPages : <any>null;
+        data["currentPage"] = this.currentPage !== undefined ? this.currentPage : <any>null;
+        data["pageSize"] = this.pageSize !== undefined ? this.pageSize : <any>null;
+        return data;
+    }
+}
+
+export interface IPaginatedResultOfViewSalesHeaderDto {
+    items?: ViewSalesHeaderDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+}
+
+export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
+    transNum?: string;
+    transDate?: Date;
+    totalAmount?: number;
+    discount?: number;
+    viewSalesDetailDtos?: ViewSalesDetailDto[];
+
+    constructor(data?: IViewSalesHeaderDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.transNum = _data["transNum"] !== undefined ? _data["transNum"] : <any>null;
+            this.transDate = _data["transDate"] ? new Date(_data["transDate"].toString()) : <any>null;
+            this.totalAmount = _data["totalAmount"] !== undefined ? _data["totalAmount"] : <any>null;
+            this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
+            if (Array.isArray(_data["viewSalesDetailDtos"])) {
+                this.viewSalesDetailDtos = [] as any;
+                for (let item of _data["viewSalesDetailDtos"])
+                    this.viewSalesDetailDtos!.push(ViewSalesDetailDto.fromJS(item));
+            }
+            else {
+                this.viewSalesDetailDtos = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ViewSalesHeaderDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ViewSalesHeaderDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["transNum"] = this.transNum !== undefined ? this.transNum : <any>null;
+        data["transDate"] = this.transDate ? this.transDate.toISOString() : <any>null;
+        data["totalAmount"] = this.totalAmount !== undefined ? this.totalAmount : <any>null;
+        data["discount"] = this.discount !== undefined ? this.discount : <any>null;
+        if (Array.isArray(this.viewSalesDetailDtos)) {
+            data["viewSalesDetailDtos"] = [];
+            for (let item of this.viewSalesDetailDtos)
+                data["viewSalesDetailDtos"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IViewSalesHeaderDto {
+    transNum?: string;
+    transDate?: Date;
+    totalAmount?: number;
+    discount?: number;
+    viewSalesDetailDtos?: ViewSalesDetailDto[];
+}
+
+export class ViewSalesDetailDto implements IViewSalesDetailDto {
+    itemName?: string;
+    quantity?: number;
+    rate?: number;
+    amount?: number;
+
+    constructor(data?: IViewSalesDetailDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.itemName = _data["itemName"] !== undefined ? _data["itemName"] : <any>null;
+            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.rate = _data["rate"] !== undefined ? _data["rate"] : <any>null;
+            this.amount = _data["amount"] !== undefined ? _data["amount"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): ViewSalesDetailDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ViewSalesDetailDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["itemName"] = this.itemName !== undefined ? this.itemName : <any>null;
+        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["rate"] = this.rate !== undefined ? this.rate : <any>null;
+        data["amount"] = this.amount !== undefined ? this.amount : <any>null;
+        return data;
+    }
+}
+
+export interface IViewSalesDetailDto {
+    itemName?: string;
+    quantity?: number;
+    rate?: number;
+    amount?: number;
 }
 
 export class CreateStocksReceivingDto implements ICreateStocksReceivingDto {
