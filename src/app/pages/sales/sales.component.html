@@ -106,8 +106,8 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu">
-              <button mat-menu-item (click)="showSalesDetails()">
-                <mat-icon > more_horiz</mat-icon>
+              <button mat-menu-item (click)="showSalesDetails(element.id)">
+                <mat-icon> more_horiz</mat-icon>
                 <span>View More</span>
               </button>
               <!-- <button mat-menu-item (click)="editTransaction(element.id)">
@@ -155,5 +155,5 @@
   [appendTo]="'body'"
   (onHide)="closeForm()"
 >
-    <app-view-sales-details></app-view-sales-details>
+  <app-view-sales-details-v1></app-view-sales-details-v1>
 </p-dialog>

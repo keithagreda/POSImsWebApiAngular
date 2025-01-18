@@ -1066,8 +1066,10 @@ export class SalesService {
         return _observableOf(null as any);
     }
 
-    viewSales(filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto> {
+    viewSales(salesHeaderId: string | null | undefined, filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto> {
         let url_ = this.baseUrl + "/api/Sales/ViewSales?";
+        if (salesHeaderId !== undefined && salesHeaderId !== null)
+            url_ += "SalesHeaderId=" + encodeURIComponent("" + salesHeaderId) + "&";
         if (filterText !== undefined && filterText !== null)
             url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
         if (pageNumber !== undefined && pageNumber !== null)
@@ -1296,7 +1298,7 @@ export class StorageLocationService {
         this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
-    createStorageLocation(input: CreateOrEditStorageLocationDto): Observable<FileResponse> {
+    createStorageLocation(input: CreateOrEditStorageLocationDto): Observable<ApiResponseOfString> {
         let url_ = this.baseUrl + "/api/StorageLocation/CreateStorageLocation";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1308,7 +1310,7 @@ export class StorageLocationService {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json",
-                "Accept": "application/octet-stream"
+                "Accept": "application/json"
             })
         };
 
@@ -1319,31 +1321,27 @@ export class StorageLocationService {
                 try {
                     return this.processCreateStorageLocation(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<FileResponse>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfString>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<FileResponse>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfString>;
         }));
     }
 
-    protected processCreateStorageLocation(response: HttpResponseBase): Observable<FileResponse> {
+    protected processCreateStorageLocation(response: HttpResponseBase): Observable<ApiResponseOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
             (response as any).error instanceof Blob ? (response as any).error : undefined;
 
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            let fileNameMatch = contentDisposition ? /filename\*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
-            let fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[3] || fileNameMatch[2] : undefined;
-            if (fileName) {
-                fileName = decodeURIComponent(fileName);
-            } else {
-                fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-                fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            }
-            return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfString.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);

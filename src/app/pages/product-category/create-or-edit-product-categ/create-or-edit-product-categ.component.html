@@ -1,0 +1,47 @@
+<p-dialog
+  header="Create Product"
+  [(visible)]="visible"
+  [modal]="true"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  [appendTo]="'body'"
+  (onHide)="close()"
+>
+  <div class="sm:container sm:mt-5">
+    <form [formGroup]="createProductCateg" *ngIf="visible" (ngSubmit)="save()">
+      <div class="row">
+        <div class="col-lg-6">
+          <mat-label class="f-w-600 m-b-8 d-block">Name</mat-label>
+          <mat-form-field appearance="outline" class="w-100" color="primary">
+            <input
+              matInput
+              name="name"
+              id="name"
+              formControlName="name"
+              placeholder="Name"
+            />
+            <mat-error
+              *ngIf="
+                createProductCateg.get('name')?.hasError('required') &&
+                createProductCateg.get('name')?.touched
+              "
+            >
+              Name is required.
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+      <button
+        type="submit"
+        mat-flat-button
+        color="primary"
+        class="m-t-4"
+        [disabled]="!createProductCateg.valid"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</p-dialog>

@@ -1,0 +1,75 @@
+<div class="sales-card">
+  <div class="sales-header">
+    <h3 class="s-header-title">#{{ viewSalesHeaderDto.transNum }}</h3>
+    <h3 class="s-header-title">
+      {{ viewSalesHeaderDto.transDate | date : "medium" }}
+    </h3>
+  </div>
+
+  <div *ngIf="isMobile" class="sales-content mobile">
+    <ng-container *ngFor="let detail of viewSalesHeaderDto.viewSalesDetailDtos">
+      <div class="sales-item">
+        <h3>{{ detail.itemName }}</h3>
+        <p><span>Quantity</span>: {{ detail.quantity }}</p>
+        <p><span>Rate</span>: ₱{{ detail.rate }}</p>
+        <p><span>Amount</span>: ₱{{ detail.amount }}</p>
+        <hr />
+      </div>
+
+      <div class="sales-summary">
+        <span>TOTAL: ₱{{ viewSalesHeaderDto.totalAmount }}</span>
+        <!-- <span>Discount: 0%</span> -->
+      </div>
+    </ng-container>
+    <!-- <div class="sales-item">
+            <h3>ICE BLOCK</h3>
+            <p> <span>Quantity</span>: 5pcs</p>
+            <p> <span>Rate</span>: ₱100</p>
+            <p> <span>Amount</span>: ₱500</p>
+            <hr>
+          </div>
+          
+          <div class="sales-summary">
+            <span>TOTAL: ₱500</span>
+            <span>Discount: 0%</span>
+          </div> -->
+  </div>
+
+  <div *ngIf="!isMobile" class="sales-content not-mobile">
+    <table
+      class="custom-table"
+      *ngFor="let detail of viewSalesHeaderDto.viewSalesDetailDtos"
+    >
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Rate</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <span class="item"> {{ detail.itemName }} </span>
+          </td>
+          <td>{{ detail.quantity }}</td>
+          <td>₱{{ detail.rate }}</td>
+          <td>₱{{ detail.amount }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="sales-summary">
+      <span>TOTAL: ₱{{ viewSalesHeaderDto.totalAmount }}</span>
+      <!-- <span>Discount: 0%</span> -->
+    </div>
+  </div>
+</div>
+<!-- <mat-card class="cardWithShadow">
+      <mat-card-content>
+        <mat-card-title class="sales-detail-header">
+          ORDER:
+        </mat-card-title>
+        dawdaw
+      </mat-card-content>
+    </mat-card> -->

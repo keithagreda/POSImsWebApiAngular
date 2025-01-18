@@ -85,7 +85,7 @@ export class TestComponentComponent implements OnInit {
   }
 
   viewSales() {
-    this._salesService.viewSales(this.filterText, null, null).subscribe({
+    this._salesService.viewSales(null, this.filterText, null, null).subscribe({
       next: (res) => {
         if (res.isSuccess) {
           console.log(res.data);

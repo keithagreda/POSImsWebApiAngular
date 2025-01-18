@@ -11,7 +11,6 @@ export const navItems: NavItem[] = [
     roles: ['Admin'],
   },
 
-  
   {
     displayName: 'Cashier',
     iconName: 'solar:widget-add-line-duotone',
@@ -30,10 +29,24 @@ export const navItems: NavItem[] = [
     route: '/products',
     roles: ['Admin', 'Inventory'],
   },
+
+  {
+    displayName: 'Product Category',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/product-category',
+    roles: ['Admin', 'Inventory'],
+  },
   {
     displayName: 'Stocks Receiving',
     iconName: 'solar:widget-add-line-duotone',
     route: '/stocks-receiving',
+    roles: ['Admin', 'Inventory'],
+  },
+
+  {
+    displayName: 'Storage Location',
+    iconName: 'solar:widget-add-line-duotone',
+    route: '/storage-location',
     roles: ['Admin', 'Inventory'],
   },
 
@@ -135,5 +148,4 @@ export const navItems: NavItem[] = [
     route: '/extra/sample-page',
     roles: ['Admin'],
   },
-
 ];
