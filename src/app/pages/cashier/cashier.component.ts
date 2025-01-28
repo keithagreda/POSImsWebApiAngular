@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { DialogModule } from 'primeng/dialog';
@@ -36,6 +36,8 @@ import { ViewSalesDetailsComponent } from 'src/app/components/view-sales-details
   styleUrl: './cashier.component.scss',
 })
 export class CashierComponent implements OnInit {
+  @ViewChild(ViewSalesDetailsComponent)
+  viewSalesDetailsComponent!: ViewSalesDetailsComponent;
   sideBarVisible2 = false;
   saving = false;
   items: GetProductDropDownTableDto[] = [];
@@ -148,6 +150,7 @@ export class CashierComponent implements OnInit {
             icon: 'success',
           });
           this._cartService.clearCart();
+          this.viewSalesDetailsComponent.initialize();
         }
       },
       error: (err) => {

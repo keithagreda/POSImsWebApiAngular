@@ -31,6 +31,10 @@ export class ViewSalesDetailsComponent implements OnInit {
   viewSalesHeaderDto: ViewSalesHeaderDto[] = [];
   constructor(private _salesService: SalesService) {}
   ngOnInit(): void {
+    this.initialize();
+  }
+
+  initialize() {
     this.checkScreenSize();
     this.viewSales();
   }

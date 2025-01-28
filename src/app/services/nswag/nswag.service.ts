@@ -3724,6 +3724,7 @@ export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
     transNum?: string;
     transDate?: Date;
     totalAmount?: number;
+    finalTotalAmount?: number;
     discount?: number;
     viewSalesDetailDtos?: ViewSalesDetailDto[];
 
@@ -3741,6 +3742,7 @@ export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
             this.transNum = _data["transNum"] !== undefined ? _data["transNum"] : <any>null;
             this.transDate = _data["transDate"] ? new Date(_data["transDate"].toString()) : <any>null;
             this.totalAmount = _data["totalAmount"] !== undefined ? _data["totalAmount"] : <any>null;
+            this.finalTotalAmount = _data["finalTotalAmount"] !== undefined ? _data["finalTotalAmount"] : <any>null;
             this.discount = _data["discount"] !== undefined ? _data["discount"] : <any>null;
             if (Array.isArray(_data["viewSalesDetailDtos"])) {
                 this.viewSalesDetailDtos = [] as any;
@@ -3765,6 +3767,7 @@ export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
         data["transNum"] = this.transNum !== undefined ? this.transNum : <any>null;
         data["transDate"] = this.transDate ? this.transDate.toISOString() : <any>null;
         data["totalAmount"] = this.totalAmount !== undefined ? this.totalAmount : <any>null;
+        data["finalTotalAmount"] = this.finalTotalAmount !== undefined ? this.finalTotalAmount : <any>null;
         data["discount"] = this.discount !== undefined ? this.discount : <any>null;
         if (Array.isArray(this.viewSalesDetailDtos)) {
             data["viewSalesDetailDtos"] = [];
@@ -3779,6 +3782,7 @@ export interface IViewSalesHeaderDto {
     transNum?: string;
     transDate?: Date;
     totalAmount?: number;
+    finalTotalAmount?: number;
     discount?: number;
     viewSalesDetailDtos?: ViewSalesDetailDto[];
 }
