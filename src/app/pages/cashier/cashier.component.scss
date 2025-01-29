@@ -4,7 +4,6 @@
   //   display: flex;
   //   justify-content: center;
   //   align-items: center;
-  background-color: $primary;
   color: $white;
   //   width: 150px;
   //   height: 150px;
@@ -16,6 +15,22 @@
     margin: 0 5px;
     text-align: center; // Center the text inside input
   }
+}
+
+.item-stock-primary{
+  background-color: $primary;
+  
+}
+
+.item-stock-low{
+  background-color: $error;
+  .btn-add-to-cart{
+    background-color: $primary;
+  }
+}
+
+.item-stock-warn{
+  background-color: $warning;
 }
 
 .trash-btn {

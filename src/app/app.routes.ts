@@ -19,20 +19,6 @@ export const routes: Routes = [
           import('./pages/pages.routes').then((m) => m.PagesRoutes),
       },
       {
-        path: 'storage-location',
-        loadChildren: () =>
-          import('./pages/storage-location/storage-location.routes').then(
-            (m) => m.StorageRoutes
-          ),
-      },
-      {
-        path: 'product-category',
-        loadChildren: () =>
-          import('./pages/product-category/product-category.routes').then(
-            (m) => m.ProductCategoryRoutes
-          ),
-      },
-      {
         path: 'entity-history',
         loadChildren: () =>
           import('./pages/entity-history/entity-history.routes').then(
@@ -111,6 +97,20 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/stocks-receiving/stocks-receiving.routes').then(
             (m) => m.StocksReceivingRoutes
+          ),
+      },
+      {
+        path: 'storage-location',
+        loadChildren: () =>
+          import('./pages/storage-location/storage-location.routes').then(
+            (m) => m.StorageRoutes
+          ),
+      },
+      {
+        path: 'product-category',
+        loadChildren: () =>
+          import('./pages/product-category/product-category.routes').then(
+            (m) => m.ProductCategoryRoutes
           ),
       },
     ],

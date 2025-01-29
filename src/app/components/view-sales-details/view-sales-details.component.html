@@ -51,7 +51,7 @@
             <div *ngIf="!isMobile" class="sales-content not-mobile">
               <table
                 class="custom-table"
-                *ngFor="let detail of item.viewSalesDetailDtos"
+                
               >
                 <thead>
                   <tr>
@@ -62,7 +62,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
+                  <tr *ngFor="let detail of item.viewSalesDetailDtos">
                     <td>
                       <span class="item"> {{ detail.itemName }} </span>
                     </td>

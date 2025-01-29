@@ -11,7 +11,7 @@ import {
   CreateSalesDetailV1Dto,
   CustomerDropDownDto,
   CustomerService,
-  GetProductDropDownTableDto,
+  GetProductDropDownTableV1Dto,
   ProductService,
   SalesService,
 } from 'src/app/services/nswag/nswag.service';
@@ -40,7 +40,7 @@ export class CashierComponent implements OnInit {
   viewSalesDetailsComponent!: ViewSalesDetailsComponent;
   sideBarVisible2 = false;
   saving = false;
-  items: GetProductDropDownTableDto[] = [];
+  items: GetProductDropDownTableV1Dto[] = [];
   tempCartItem: CreateSalesDetailV1Dto[] = [];
   cartItem: CreateSalesDetailV1Dto[] = [];
   product: CreateSalesDetailV1Dto = new CreateSalesDetailV1Dto();
@@ -64,7 +64,7 @@ export class CashierComponent implements OnInit {
 
   getProducts() {
     this._productService
-      .getProductDropDownTable(null, null, null)
+      .getProductDropDownTableV1(null, null, null)
       .subscribe((res) => {
         if (res.isSuccess) {
           this.items = res.data.items ?? [];
@@ -150,6 +150,7 @@ export class CashierComponent implements OnInit {
             icon: 'success',
           });
           this._cartService.clearCart();
+          this.getProducts();
           this.viewSalesDetailsComponent.initialize();
         }
       },
@@ -207,8 +208,8 @@ export class CashierComponent implements OnInit {
   }
 
   showControl(
-    selectedItem: GetProductDropDownTableDto,
-    items: GetProductDropDownTableDto[]
+    selectedItem: GetProductDropDownTableV1Dto,
+    items: GetProductDropDownTableV1Dto[]
   ) {
     if (selectedItem.showControl) {
       return;
@@ -223,7 +224,7 @@ export class CashierComponent implements OnInit {
     });
   }
 
-  addQuantity(product: GetProductDropDownTableDto) {
+  addQuantity(product: GetProductDropDownTableV1Dto) {
     this.selectedProduct.productId = product.id ?? 0;
     this.selectedProduct.quantity = (this.selectedProduct.quantity || 0) + 1;
     this.selectedProduct.productName = product.name;
@@ -232,7 +233,7 @@ export class CashierComponent implements OnInit {
     // this._cartService.addToCart(addToCartDto);
     // this.getCartItem();
   }
-  minusQuantity(product: GetProductDropDownTableDto) {
+  minusQuantity(product: GetProductDropDownTableV1Dto) {
     if ((this.selectedProduct.quantity || 0) <= 1) return;
     this.selectedProduct.productId = product.id ?? 0;
     this.selectedProduct.quantity = (this.selectedProduct.quantity || 0) - 1;
@@ -252,7 +253,7 @@ export class CashierComponent implements OnInit {
     );
   }
 
-  addToCart(item: GetProductDropDownTableDto) {
+  addToCart(item: GetProductDropDownTableV1Dto) {
     this.showDialog();
     this._cartService.addToCart(this.selectedProduct);
     item.showControl = false;

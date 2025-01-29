@@ -742,6 +742,60 @@ export class ProductService {
         return _observableOf(null as any);
     }
 
+    getProductDropDownTableV1(filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto> {
+        let url_ = this.baseUrl + "/api/Product/GetProductsForDropDownV1?";
+        if (filterText !== undefined && filterText !== null)
+            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
+        if (pageNumber !== undefined && pageNumber !== null)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize !== undefined && pageSize !== null)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProductDropDownTableV1(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProductDropDownTableV1(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto>;
+        }));
+    }
+
+    protected processGetProductDropDownTableV1(response: HttpResponseBase): Observable<ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     getProductDetailsForCart(input: CreateSalesDetailV1Dto[]): Observable<ApiResponseOfListOfCreateSalesDetailV1Dto> {
         let url_ = this.baseUrl + "/api/Product/GetProductDetailsForCart";
         url_ = url_.replace(/[?&]$/, "");
@@ -2765,6 +2819,183 @@ export interface IGetProductDropDownTableDto {
     id?: number;
     name?: string;
     price?: number;
+    showControl?: boolean;
+}
+
+export class ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto implements IApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto {
+    data!: PaginatedResultOfGetProductDropDownTableV1Dto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new PaginatedResultOfGetProductDropDownTableV1Dto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? PaginatedResultOfGetProductDropDownTableV1Dto.fromJS(_data["data"]) : new PaginatedResultOfGetProductDropDownTableV1Dto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfPaginatedResultOfGetProductDropDownTableV1Dto {
+    data: PaginatedResultOfGetProductDropDownTableV1Dto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PaginatedResultOfGetProductDropDownTableV1Dto implements IPaginatedResultOfGetProductDropDownTableV1Dto {
+    items?: GetProductDropDownTableV1Dto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+
+    constructor(data?: IPaginatedResultOfGetProductDropDownTableV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(GetProductDropDownTableV1Dto.fromJS(item));
+            }
+            else {
+                this.items = <any>null;
+            }
+            this.totalCount = _data["totalCount"] !== undefined ? _data["totalCount"] : <any>null;
+            this.totalPages = _data["totalPages"] !== undefined ? _data["totalPages"] : <any>null;
+            this.currentPage = _data["currentPage"] !== undefined ? _data["currentPage"] : <any>null;
+            this.pageSize = _data["pageSize"] !== undefined ? _data["pageSize"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PaginatedResultOfGetProductDropDownTableV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResultOfGetProductDropDownTableV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount !== undefined ? this.totalCount : <any>null;
+        data["totalPages"] = this.totalPages !== undefined ? this.totalPages : <any>null;
+        data["currentPage"] = this.currentPage !== undefined ? this.currentPage : <any>null;
+        data["pageSize"] = this.pageSize !== undefined ? this.pageSize : <any>null;
+        return data;
+    }
+}
+
+export interface IPaginatedResultOfGetProductDropDownTableV1Dto {
+    items?: GetProductDropDownTableV1Dto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+}
+
+export class GetProductDropDownTableV1Dto implements IGetProductDropDownTableV1Dto {
+    id?: number;
+    name?: string;
+    price?: number;
+    currentStock?: number;
+    showControl?: boolean;
+
+    constructor(data?: IGetProductDropDownTableV1Dto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+            this.price = _data["price"] !== undefined ? _data["price"] : <any>null;
+            this.currentStock = _data["currentStock"] !== undefined ? _data["currentStock"] : <any>null;
+            this.showControl = _data["showControl"] !== undefined ? _data["showControl"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): GetProductDropDownTableV1Dto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetProductDropDownTableV1Dto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        data["price"] = this.price !== undefined ? this.price : <any>null;
+        data["currentStock"] = this.currentStock !== undefined ? this.currentStock : <any>null;
+        data["showControl"] = this.showControl !== undefined ? this.showControl : <any>null;
+        return data;
+    }
+}
+
+export interface IGetProductDropDownTableV1Dto {
+    id?: number;
+    name?: string;
+    price?: number;
+    currentStock?: number;
     showControl?: boolean;
 }
 

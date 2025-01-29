@@ -13,6 +13,11 @@
             <mat-card
               class="b-1 shadow-none item-box"
               (click)="showControl(item, items)"
+              [ngClass]="{
+                'item-stock-low': (item.currentStock || 0) <= 25,
+                'item-stock-warn': (item.currentStock || 0) > 25 && (item.currentStock || 0) <= 50,
+                'item-stock-primary': (item.currentStock || 0) > 50 && (item.currentStock || 0) > 50
+              }"
             >
               <mat-card-header class="prod-header">
                 <mat-card-title>{{ item.name }}</mat-card-title>
@@ -40,6 +45,8 @@
                     class="w-100 btn-add-to-cart"
                     color="warn"
                     (click)="addToCart(item)"
+                    [ngClass]="{
+                'item-stock-low': (item.currentStock || 0) <= 25}"
                   >
                     Add To Cart
                   </button>
