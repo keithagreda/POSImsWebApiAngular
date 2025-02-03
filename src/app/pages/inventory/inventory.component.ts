@@ -1,5 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
+import { CreateOrEditStocksReceivingModalComponent } from 'src/app/components/create-or-edit-stocks-receiving-modal/create-or-edit-stocks-receiving-modal.component';
 import { CurrentStocksComponent } from 'src/app/components/current-stocks/current-stocks.component';
+import { InventoryLogsComponent } from 'src/app/components/inventory-logs/inventory-logs.component';
 import { MaterialModule } from 'src/app/material.module';
 import { InventoryService } from 'src/app/services/nswag/nswag.service';
 import Swal from 'sweetalert2';
@@ -7,13 +9,21 @@ import Swal from 'sweetalert2';
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [MaterialModule, CurrentStocksComponent],
+  imports: [
+    MaterialModule,
+    CurrentStocksComponent,
+    CreateOrEditStocksReceivingModalComponent,
+    InventoryLogsComponent,
+  ],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss',
 })
 export class InventoryComponent {
   @ViewChild(CurrentStocksComponent)
   currentStocksComponent!: CurrentStocksComponent;
+
+  @ViewChild(CreateOrEditStocksReceivingModalComponent)
+  createOrEditStocksReceivingModalComponent!: CreateOrEditStocksReceivingModalComponent;
   constructor(private _inventoryService: InventoryService) {}
 
   closeInventory() {
@@ -57,5 +67,13 @@ export class InventoryComponent {
         Swal.fire('Cancelled', 'Your action has been cancelled.', 'error');
       }
     });
+  }
+
+  getCurrentStocks() {
+    this.currentStocksComponent.getCurrentStocks();
+  }
+
+  showCorEStocksReceivingModal() {
+    this.createOrEditStocksReceivingModalComponent.show();
   }
 }
