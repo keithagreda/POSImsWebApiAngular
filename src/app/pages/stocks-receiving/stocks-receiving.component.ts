@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { CreateOrEditStocksReceivingModalComponent } from 'src/app/components/create-or-edit-stocks-receiving-modal/create-or-edit-stocks-receiving-modal.component';
 import { MaterialModule } from 'src/app/material.module';
 import {
   GetAllStocksReceivingDto,
   StocksService,
 } from 'src/app/services/nswag/nswag.service';
-import { CreateOrEditStocksReceivingModalComponent } from './create-or-edit-stocks-receiving-modal/create-or-edit-stocks-receiving-modal.component';
-
 @Component({
   selector: 'app-stocks-receiving',
   standalone: true,

@@ -1,15 +1,31 @@
 <mat-card class="cardWithShadow">
   <mat-card-header class="k-header">
-    <mat-card-title>Inventory Actions</mat-card-title>
-    <button
-      (click)="closeInventory()"
-      type="button"
-      mat-flat-button
-      color="warn"
-      class="m-t-4"
-    >
-      Close Inventory
-    </button>
+    <mat-card-title>Actions</mat-card-title>
+    <div class="actions">
+      <button
+        (click)="showCorEStocksReceivingModal()"
+        type="button"
+        mat-flat-button
+        color="primary"
+        class="m-t-4"
+      >
+        Receive Stocks
+      </button>
+      <button
+        (click)="closeInventory()"
+        type="button"
+        mat-flat-button
+        color="warn"
+        class="m-t-4"
+      >
+        Close Inventory
+      </button>
+    </div>
   </mat-card-header>
   <app-current-stocks></app-current-stocks>
+  <app-create-or-edit-stocks-receiving-modal
+    (modalSave)="getCurrentStocks()"
+  ></app-create-or-edit-stocks-receiving-modal>
 </mat-card>
+
+<app-inventory-logs></app-inventory-logs>
