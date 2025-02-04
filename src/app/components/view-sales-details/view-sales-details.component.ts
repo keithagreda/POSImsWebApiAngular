@@ -21,13 +21,14 @@ import {
     FormsModule,
   ],
   templateUrl: './view-sales-details.component.html',
-  styleUrl: './view-sales-details.component.scss',
+  styleUrls: ['./view-sales-details.component.scss'],
 })
 export class ViewSalesDetailsComponent implements OnInit {
   visible = false;
   loading = false;
   filterText = '';
   isMobile = false;
+  isPrint = false;
   viewSalesHeaderDto: ViewSalesHeaderDto[] = [];
   constructor(private _salesService: SalesService) {}
   ngOnInit(): void {
@@ -66,5 +67,43 @@ export class ViewSalesDetailsComponent implements OnInit {
   }
   closeForm() {
     this.visible = false;
+  }
+
+  printDiv(divId: string) {
+    const printElement = document.getElementById(divId);
+    if (!printElement) {
+      console.log('Element with id: ' + divId + ' not found');
+      return;
+    }
+    const printContents = printElement.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    const styles = `
+    <style>
+      .sales-card {
+        width: 360px;
+        height: 300px;
+        margin: 0 auto;
+      }
+    </style>
+  `;
+
+  document.body.innerHTML = `
+    <html>
+      <head>
+        <title>Print</title>
+        ${styles}
+      </head>
+      <body>
+        ${printContents}
+      </body>
+    </html>
+  `;
+  setTimeout(() => {
+    window.print();
+    this.isPrint = false;
+    document.body.innerHTML = originalContents;
+    window.location.reload(); // Reload to restore the original content
+  }, 5000);
   }
 }

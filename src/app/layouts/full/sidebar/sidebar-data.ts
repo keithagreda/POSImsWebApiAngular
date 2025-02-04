@@ -6,20 +6,20 @@ export const navItems: NavItem[] = [
   },
   {
     displayName: 'Dashboard',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'solar:chart-bold',
     route: '/dashboard',
     roles: ['Admin'],
   },
 
   {
     displayName: 'Cashier',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'solar:cash-out-bold-duotone',
     route: '/cashier',
     roles: ['Admin', 'Cashier'],
   },
   {
     displayName: 'Sales',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'solar:hand-money-bold',
     route: '/sales',
     roles: ['Admin', 'Cashier'],
   },
@@ -32,27 +32,27 @@ export const navItems: NavItem[] = [
 
   {
     displayName: 'Product Category',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'tabler:category',
     route: '/product-category',
     roles: ['Admin', 'Inventory'],
   },
   {
     displayName: 'Stocks Receiving',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'line-md:backup-restore',
     route: '/stocks-receiving',
     roles: ['Admin', 'Inventory'],
   },
 
   {
     displayName: 'Storage Location',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'tabler:current-location-filled',
     route: '/storage-location',
     roles: ['Admin', 'Inventory'],
   },
 
   {
     displayName: 'Inventory',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'line-md:check-list-3-twotone',
     route: '/inventory',
     roles: ['Admin', 'Inventory'],
   },

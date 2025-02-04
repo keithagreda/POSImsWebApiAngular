@@ -4365,6 +4365,9 @@ export interface IPaginatedResultOfViewSalesHeaderDto {
 
 export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
     transNum?: string;
+    customerName?: string;
+    soldById?: string;
+    soldBy?: string;
     transDate?: Date;
     totalAmount?: number;
     finalTotalAmount?: number;
@@ -4383,6 +4386,9 @@ export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
     init(_data?: any) {
         if (_data) {
             this.transNum = _data["transNum"] !== undefined ? _data["transNum"] : <any>null;
+            this.customerName = _data["customerName"] !== undefined ? _data["customerName"] : <any>null;
+            this.soldById = _data["soldById"] !== undefined ? _data["soldById"] : <any>null;
+            this.soldBy = _data["soldBy"] !== undefined ? _data["soldBy"] : <any>null;
             this.transDate = _data["transDate"] ? new Date(_data["transDate"].toString()) : <any>null;
             this.totalAmount = _data["totalAmount"] !== undefined ? _data["totalAmount"] : <any>null;
             this.finalTotalAmount = _data["finalTotalAmount"] !== undefined ? _data["finalTotalAmount"] : <any>null;
@@ -4408,6 +4414,9 @@ export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["transNum"] = this.transNum !== undefined ? this.transNum : <any>null;
+        data["customerName"] = this.customerName !== undefined ? this.customerName : <any>null;
+        data["soldById"] = this.soldById !== undefined ? this.soldById : <any>null;
+        data["soldBy"] = this.soldBy !== undefined ? this.soldBy : <any>null;
         data["transDate"] = this.transDate ? this.transDate.toISOString() : <any>null;
         data["totalAmount"] = this.totalAmount !== undefined ? this.totalAmount : <any>null;
         data["finalTotalAmount"] = this.finalTotalAmount !== undefined ? this.finalTotalAmount : <any>null;
@@ -4423,6 +4432,9 @@ export class ViewSalesHeaderDto implements IViewSalesHeaderDto {
 
 export interface IViewSalesHeaderDto {
     transNum?: string;
+    customerName?: string;
+    soldById?: string;
+    soldBy?: string;
     transDate?: Date;
     totalAmount?: number;
     finalTotalAmount?: number;

@@ -11,11 +11,34 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  // .sales-card {
+  //   width: 360px !important;
+  //   height: 300px !important;
+  // }
+
+}
+
+
+
+
 .sales-header {
+  display: flex;
+  flex-direction: row;
   margin-bottom: 8px;
   background-color: $primary;
+  justify-content: space-between;
   border-radius: 7px 7px 0px 0px;
   padding: 1rem 0.5rem;
+}
+
+.order-details{
+  display: flex;
+  flex-direction: column;
 }
 
 .sales-content {
@@ -50,9 +73,20 @@
 
 .sales-summary {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  overflow-x: auto;
+}
+
+.sold-by{
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.costs {
+  display: flex;
   flex-direction: column;
   text-align: end;
-  overflow-x: auto;
 }
 
 .item {

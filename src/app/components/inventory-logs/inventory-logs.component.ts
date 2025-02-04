@@ -70,7 +70,7 @@ export class InventoryLogsComponent implements OnInit {
         validators: this.dateRangeValidator, // Apply here at group level if necessary
       }
     );
-    this.setDateTimeFilterToCurrDay();
+    // this.setDateTimeFilterToCurrDay();
     this.getAllInventory();
   }
 

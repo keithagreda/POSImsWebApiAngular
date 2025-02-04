@@ -26,8 +26,8 @@ export class CurrentStocksComponent implements OnInit {
   displayedColumns: string[] = [
     'productName',
     'received',
-    'sales',
     'begQty',
+    'sales',
     'currentStock',
   ];
   dataSource: CurrentInventoryDto[] = [];

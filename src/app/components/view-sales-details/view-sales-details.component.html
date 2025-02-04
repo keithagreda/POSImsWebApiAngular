@@ -9,32 +9,46 @@
       <div class="row">
         <div
           class="col-lg-4 col-sm-6 m-b-20"
-          *ngFor="let item of viewSalesHeaderDto"
+          *ngFor="let item of viewSalesHeaderDto; let i = index"
         >
-          <div class="sales-card">
-            <div class="sales-header">
-              <h3 class="s-header-title">#{{ item.transNum }}</h3>
-              <h3 class="s-header-title">
-                {{ item.transDate | date : "medium" }}
-              </h3>
-            </div>
-
-            <div *ngIf="isMobile" class="sales-content mobile">
-              <ng-container *ngFor="let detail of item.viewSalesDetailDtos">
-                <div class="sales-item">
-                  <h3>{{ detail.itemName }}</h3>
-                  <p><span>Quantity</span>: {{ detail.quantity }}</p>
-                  <p><span>Rate</span>: ₱{{ detail.rate }}</p>
-                  <p><span>Amount</span>: ₱{{ detail.amount }}</p>
-                  <hr />
+          <div [id]="'printDiv-' + i">
+            <div class="sales-card">
+              <div class="sales-header">
+                <div class="order-details">
+                  <h3 class="s-header-title">{{ item.customerName }}</h3>
+                  <h3 class="s-header-title">#{{ item.transNum }}</h3>
+                  <h3 class="s-header-title">
+                    {{ item.transDate | date : "MMM d, y, h:mm a" }}
+                  </h3>
                 </div>
 
-                <div class="sales-summary">
-                  <span>TOTAL: ₱{{ item.totalAmount }}</span>
-                  <!-- <span>Discount: 0%</span> -->
-                </div>
-              </ng-container>
-              <!-- <div class="sales-item">
+                <button
+                  mat-flat-button
+                  color="muted"
+                  class="m-r-8 no-print"
+                  (click)="printDiv('printDiv-' + i)"
+                >
+                  <mat-icon style="margin: 0 auto">print</mat-icon>
+                </button>
+              </div>
+              <!-- Print Button -->
+
+              <div *ngIf="isMobile" class="sales-content mobile no-print">
+                <ng-container *ngFor="let detail of item.viewSalesDetailDtos">
+                  <div class="sales-item">
+                    <h3>{{ detail.itemName }}</h3>
+                    <p><span>Quantity</span>: {{ detail.quantity }}</p>
+                    <p><span>Rate</span>: ₱{{ detail.rate }}</p>
+                    <p><span>Amount</span>: ₱{{ detail.amount }}</p>
+                    <hr />
+                  </div>
+
+                  <div class="sales-summary">
+                    <span>TOTAL: ₱{{ item.totalAmount }}</span>
+                    <!-- <span>Discount: 0%</span> -->
+                  </div>
+                </ng-container>
+                <!-- <div class="sales-item">
                       <h3>ICE BLOCK</h3>
                       <p> <span>Quantity</span>: 5pcs</p>
                       <p> <span>Rate</span>: ₱100</p>
@@ -46,40 +60,46 @@
                       <span>TOTAL: ₱500</span>
                       <span>Discount: 0%</span>
                     </div> -->
-            </div>
+              </div>
 
-            <div *ngIf="!isMobile" class="sales-content not-mobile">
-              <table
-                class="custom-table"
-                
-              >
-                <thead>
-                  <tr>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let detail of item.viewSalesDetailDtos">
-                    <td>
-                      <span class="item"> {{ detail.itemName }} </span>
-                    </td>
-                    <td>{{ detail.quantity }}</td>
-                    <td>₱{{ detail.rate }}</td>
-                    <td>₱{{ detail.amount }}</td>
-                  </tr>
-                </tbody>
-              </table>
-              <div class="sales-summary">
-                <span>TOTAL: ₱{{ item.totalAmount }}</span>
-                <span>DISCOUNT: {{ item.discount }}%</span>
-                <span>FINAL TOTAL AMOUNT: ₱{{ item.finalTotalAmount }}</span>
-                <!-- <span>Discount: 0%</span> -->
+              <div *ngIf="!isMobile" class="sales-content not-mobile">
+                <table class="custom-table">
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Quantity</th>
+                      <th>Rate</th>
+                      <th>Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let detail of item.viewSalesDetailDtos">
+                      <td>
+                        <span class="item"> {{ detail.itemName }} </span>
+                      </td>
+                      <td>{{ detail.quantity }}</td>
+                      <td>₱{{ detail.rate }}</td>
+                      <td>₱{{ detail.amount }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="sales-summary">
+                  <div class="sold-by text-dark f-w-600 text-capitalize">
+                    <span>Sold By: {{ item.soldBy }}</span>
+                  </div>
+                  <div class="costs">
+                    <span>TOTAL: ₱{{ item.totalAmount }}</span>
+                    <span>DISCOUNT: {{ item.discount }}%</span>
+                    <span
+                      >FINAL TOTAL AMOUNT: ₱{{ item.finalTotalAmount }}</span
+                    >
+                  </div>
+                  <!-- <span>Discount: 0%</span> -->
+                </div>
               </div>
             </div>
           </div>
+
           <!-- <mat-card class="cardWithShadow">
                 <mat-card-content>
                   <mat-card-title class="sales-detail-header">

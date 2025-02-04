@@ -77,7 +77,7 @@ export class MonthlySalesChartComponent implements OnInit, OnDestroy {
       series: [
         {
           name: 'Income',
-          color: 'rgba(255, 102, 146, 1)',
+          color: '#3cb043',
           data: this.data,
         },
       ],
