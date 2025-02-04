@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MaterialModule } from 'src/app/material.module';
+import { DateTime } from 'luxon';
 import {
   CurrentInventoryDto,
   GetInventoryDto,
@@ -62,24 +63,36 @@ export class InventoryLogsComponent implements OnInit {
     this.filterForm = this.fb.group(
       {
         productName: [''],
-        timeOpened: ['', [Validators.required]], // no changes here
-        timeClosed: ['', [Validators.required]], // no changes here
+        timeOpened: [null], // no changes here
+        timeClosed: [null], // no changes here
       },
       {
         validators: this.dateRangeValidator, // Apply here at group level if necessary
       }
     );
+    this.setDateTimeFilterToCurrDay();
     this.getAllInventory();
   }
 
+  setDateTimeFilterToCurrDay() {
+    this.filterForm.get('timeOpened')?.setValue(new Date());
+    this.filterForm.get('timeClosed')?.setValue(new Date());
+  }
+
   getAllInventory() {
+    const timeOpened = this.filterForm.get('timeOpened')?.value;
+    const timeClosed = this.filterForm.get('timeClosed')?.value;
+
     this.loading = true;
     this._inventoryService
       .getAllInventory(
-        this.filterForm.get('timeOpened')?.value,
+        this.filterForm.get('productName')?.value,
+        timeOpened,
+        // from, //
         undefined,
         undefined,
-        this.filterForm.get('timeClosed')?.value,
+        timeClosed,
+        // to, //
         undefined,
         undefined
       )
@@ -100,6 +113,10 @@ export class InventoryLogsComponent implements OnInit {
     const timeOpened = group.get('timeOpened')?.value;
     const timeClosed = group.get('timeClosed')?.value;
 
+    if (timeOpened == undefined && timeClosed == undefined) {
+      return null; // Valid
+    }
+
     // Check if the timeClosed is later than timeOpened
     if (timeOpened && timeClosed && timeClosed < timeOpened) {
       return { dateRangeInvalid: true };
@@ -111,5 +128,14 @@ export class InventoryLogsComponent implements OnInit {
     if (this.filterForm.valid) {
       this.getAllInventory();
     }
+  }
+
+  clearDates() {
+    this.filterForm.get('timeOpened')?.setValue(null);
+    this.filterForm.get('timeClosed')?.setValue(null);
+    const timeOpened = this.filterForm.get('timeOpened')?.value;
+    const timeClosed = this.filterForm.get('timeClosed')?.value;
+    console.log(timeOpened);
+    console.log(timeClosed);
   }
 }

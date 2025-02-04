@@ -1,6 +1,7 @@
+@import "src/assets/scss/_variables.scss";
 $mat-primary: (
   100: white,
-  500: #635bff,
+  500: $primary,
   700: #635bff,
   contrast: (
     100: white,

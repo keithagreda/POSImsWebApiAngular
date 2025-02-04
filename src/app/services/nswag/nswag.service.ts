@@ -206,8 +206,10 @@ export class InventoryService {
         return _observableOf(null as any);
     }
 
-    getAllInventory(minCreationTime: Date | null | undefined, maxCreationTime: Date | null | undefined, minClosedTime: Date | null | undefined, maxClosedTime: Date | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfGetInventoryDto> {
+    getAllInventory(productName: string | null | undefined, minCreationTime: Date | null | undefined, maxCreationTime: Date | null | undefined, minClosedTime: Date | null | undefined, maxClosedTime: Date | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfGetInventoryDto> {
         let url_ = this.baseUrl + "/api/Inventory/GetAllInventory?";
+        if (productName !== undefined && productName !== null)
+            url_ += "ProductName=" + encodeURIComponent("" + productName) + "&";
         if (minCreationTime !== undefined && minCreationTime !== null)
             url_ += "MinCreationTime=" + encodeURIComponent(minCreationTime ? "" + minCreationTime.toISOString() : "") + "&";
         if (maxCreationTime !== undefined && maxCreationTime !== null)

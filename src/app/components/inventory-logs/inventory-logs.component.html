@@ -1,9 +1,6 @@
 <mat-card class="cardWithShadow">
-  <div class="loading" *ngIf="loading">
-    <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
-  </div>
   <form [formGroup]="filterForm" (ngSubmit)="onFilter()">
-    <mat-card-content *ngIf="!loading">
+    <mat-card-content>
       <mat-card-title>
         Inventory Logs
         <div class="filter-container">
@@ -52,15 +49,29 @@
               mat-flat-button
               color="primary"
               class="m-t-4"
+              matTooltip="Search"
               [disabled]="filterForm.invalid"
             >
-              Filter
+              <mat-icon style="margin: 0">search</mat-icon>
+            </button>
+            <button
+              type="button"
+              mat-flat-button
+              color="warn"
+              class="m-t-4"
+              (click)="clearDates()"
+              matTooltip="Clear Dates"
+            >
+              <mat-icon style="margin: 0">free_cancellation</mat-icon>
             </button>
           </div>
         </div>
       </mat-card-title>
     </mat-card-content>
   </form>
+  <div class="loading" *ngIf="loading">
+    <p-progressSpinner ariaLabel="loading"></p-progressSpinner>
+  </div>
   <mat-card-content *ngIf="!loading">
     <div class="table-responsive">
       <table mat-table [dataSource]="dataSource" class="w-100">
