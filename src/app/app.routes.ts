@@ -14,11 +14,6 @@ export const routes: Routes = [
         pathMatch: 'full',
       },
       {
-        path: 'dashboard',
-        loadChildren: () =>
-          import('./pages/pages.routes').then((m) => m.PagesRoutes),
-      },
-      {
         path: 'entity-history',
         loadChildren: () =>
           import('./pages/entity-history/entity-history.routes').then(
@@ -57,6 +52,21 @@ export const routes: Routes = [
     component: FullComponent,
     children: [
       {
+        path: 'dashboard',
+        loadChildren: () =>
+          import('./pages/pages.routes').then((m) => m.PagesRoutes),
+      },
+    ],
+    canActivate: [RoleGuard],
+    data: {
+      roles: ['Admin', 'Owner'],
+    },
+  },
+  {
+    path: '',
+    component: FullComponent,
+    children: [
+      {
         path: 'cashier',
         loadChildren: () =>
           import('./pages/cashier/cashier.routes').then((m) => m.CashierRoutes),
@@ -69,7 +79,7 @@ export const routes: Routes = [
     ],
     canActivate: [RoleGuard],
     data: {
-      roles: ['Admin', 'Cashier'],
+      roles: ['Admin', 'Cashier', 'Owner'],
     },
   },
   {
@@ -81,14 +91,6 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./pages/products/product.routes').then(
             (m) => m.ProductsRoutes
-          ),
-      },
-
-      {
-        path: 'inventory',
-        loadChildren: () =>
-          import('./pages/inventory/inventory.routes').then(
-            (m) => m.InventoryRoutes
           ),
       },
 
@@ -117,6 +119,23 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: {
       roles: ['Admin', 'Inventory'],
+    },
+  },
+  {
+    path: '',
+    component: FullComponent,
+    children: [
+      {
+        path: 'inventory',
+        loadChildren: () =>
+          import('./pages/inventory/inventory.routes').then(
+            (m) => m.InventoryRoutes
+          ),
+      },
+    ],
+    canActivate: [RoleGuard],
+    data: {
+      roles: ['Admin', 'Inventory', 'Owner'],
     },
   },
   {

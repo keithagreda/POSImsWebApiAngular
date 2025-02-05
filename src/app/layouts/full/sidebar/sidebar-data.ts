@@ -8,14 +8,14 @@ export const navItems: NavItem[] = [
     displayName: 'Dashboard',
     iconName: 'solar:chart-bold',
     route: '/dashboard',
-    roles: ['Admin'],
+    roles: ['Admin', 'Owner'],
   },
 
   {
     displayName: 'Cashier',
     iconName: 'solar:cash-out-bold-duotone',
     route: '/cashier',
-    roles: ['Admin', 'Cashier'],
+    roles: ['Admin', 'Cashier', 'Owner'],
   },
   {
     displayName: 'Sales',
@@ -54,7 +54,7 @@ export const navItems: NavItem[] = [
     displayName: 'Inventory',
     iconName: 'line-md:check-list-3-twotone',
     route: '/inventory',
-    roles: ['Admin', 'Inventory'],
+    roles: ['Admin', 'Inventory', 'Owner'],
   },
   {
     displayName: 'Test',

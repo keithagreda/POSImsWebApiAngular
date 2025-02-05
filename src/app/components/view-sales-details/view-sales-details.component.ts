@@ -88,7 +88,7 @@ export class ViewSalesDetailsComponent implements OnInit {
     </style>
   `;
 
-  document.body.innerHTML = `
+    document.body.innerHTML = `
     <html>
       <head>
         <title>Print</title>
@@ -99,11 +99,9 @@ export class ViewSalesDetailsComponent implements OnInit {
       </body>
     </html>
   `;
-  setTimeout(() => {
     window.print();
     this.isPrint = false;
     document.body.innerHTML = originalContents;
-    window.location.reload(); // Reload to restore the original content
-  }, 5000);
+    window.location.reload();
   }
 }

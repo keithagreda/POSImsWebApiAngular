@@ -56,6 +56,8 @@ export class AppSideLoginComponent {
             debugger;
             if (userRoles.includes('Admin')) {
               this.router.navigate(['/dashboard']);
+            } else if (userRoles.includes('Owner')) {
+              this.router.navigate(['/dashboard']);
             } else if (userRoles.includes('Cashier')) {
               this.router.navigate(['/cashier']);
             } else if (userRoles.includes('Inventory')) {
