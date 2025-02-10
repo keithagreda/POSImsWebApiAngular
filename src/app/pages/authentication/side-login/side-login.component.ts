@@ -53,7 +53,6 @@ export class AppSideLoginComponent {
           if (res.isSuccess) {
             localStorage.setItem('token', res.data.userToken ?? '');
             const userRoles = this.authService.getUserRoles();
-            debugger;
             if (userRoles.includes('Admin')) {
               this.router.navigate(['/dashboard']);
             } else if (userRoles.includes('Owner')) {

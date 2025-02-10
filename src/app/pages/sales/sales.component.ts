@@ -4,9 +4,14 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogModule } from 'primeng/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import {
   SalesHeaderDto,
   SalesService,
-  ViewSalesDetailDto,
   ViewSalesHeaderDto,
 } from 'src/app/services/nswag/nswag.service';
 import { ViewSalesDetailsV1Component } from 'src/app/components/view-sales-details-v1/view-sales-details-v1.component';
@@ -20,14 +25,17 @@ import { LoadingService } from 'src/app/services/loading.service';
     CommonModule,
     MaterialModule,
     ViewSalesDetailsV1Component,
+    MatTableModule,
+    MatPaginatorModule,
   ],
   templateUrl: './sales.component.html',
-  styleUrl: './sales.component.scss',
+  styleUrls: ['./sales.component.scss'],
 })
 export class SalesComponent implements OnInit {
   @ViewChild(ViewSalesDetailsV1Component)
   viewSalesDetailsComponent!: ViewSalesDetailsV1Component;
-  salesHeadersDto: SalesHeaderDto[] = [];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  dataSource = new MatTableDataSource<SalesHeaderDto>([]);
   visible = false;
   displayedColumns1: string[] = [
     'transNum',
@@ -37,11 +45,14 @@ export class SalesComponent implements OnInit {
     'soldBy',
     'action',
   ];
+  totalRecords = 0;
+
   constructor(
     private _toastr: ToastrService,
     private _salesService: SalesService,
     private _loadingService: LoadingService
   ) {}
+
   ngOnInit(): void {
     this.getSales();
   }
@@ -50,17 +61,22 @@ export class SalesComponent implements OnInit {
     this.visible = false;
   }
 
-  getSales() {
-    this._salesService.getSales(null, null, null, null, null).subscribe({
-      next: (res) => {
-        if (res.isSuccess) {
-          this.salesHeadersDto = res.data.items ?? [];
-        }
-      },
-      error: (err) => {
-        console.error(err);
-      },
-    });
+  getSales(event?: PageEvent) {
+    const currentPage = event?.pageIndex ?? 0;
+    const pageSize = event?.pageSize ?? 5;
+    this._salesService
+      .getSales(null, null, null, currentPage + 1, pageSize)
+      .subscribe({
+        next: (res) => {
+          if (res.isSuccess) {
+            this.dataSource.data = res.data.items ?? [];
+            this.totalRecords = res.data.totalCount ?? 0;
+          }
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
   }
 
   showSalesDetails(headerId: string) {

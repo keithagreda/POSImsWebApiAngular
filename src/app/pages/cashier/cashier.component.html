@@ -1,4 +1,7 @@
-<mat-card class="cardWithShadow">
+<mat-card
+  class="cardWithShadow"
+  *ngIf="authService.hasRole('Admin') || authService.hasRole('Cashier')"
+>
   <mat-card-header class="k-header">
     <mat-card-title>Cashier</mat-card-title>
     <button mat-flat-button class="" (click)="showDialog()" color="primary">
@@ -15,8 +18,11 @@
               (click)="showControl(item, items)"
               [ngClass]="{
                 'item-stock-low': (item.currentStock || 0) <= 25,
-                'item-stock-warn': (item.currentStock || 0) > 25 && (item.currentStock || 0) <= 50,
-                'item-stock-primary': (item.currentStock || 0) > 50 && (item.currentStock || 0) > 50
+                'item-stock-warn':
+                  (item.currentStock || 0) > 25 &&
+                  (item.currentStock || 0) <= 50,
+                'item-stock-primary':
+                  (item.currentStock || 0) > 50 && (item.currentStock || 0) > 50
               }"
             >
               <mat-card-header class="prod-header">
@@ -46,7 +52,8 @@
                     color="warn"
                     (click)="addToCart(item)"
                     [ngClass]="{
-                'item-stock-low': (item.currentStock || 0) <= 25}"
+                      'item-stock-low': (item.currentStock || 0) <= 25
+                    }"
                   >
                     Add To Cart
                   </button>
@@ -173,7 +180,7 @@
   (onHide)="closeForm()"
 >
   <p-autoComplete
-    styleClass="w-100 dropdown-style"
+    styleClass="w-100 mt-2 dropdown-style"
     [(ngModel)]="customerName"
     [dropdown]="true"
     [suggestions]="customerNames"
@@ -198,6 +205,7 @@
     mat-flat-button
     color="primary"
     (click)="saveTransaction()"
+    class="mt-2"
   >
     Save Transaction
   </button>

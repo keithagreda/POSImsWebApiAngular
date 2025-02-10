@@ -1,5 +1,8 @@
 <mat-card class="cardWithShadow">
-  <mat-card-header class="k-header">
+  <mat-card-header
+    class="k-header"
+    *ngIf="authService.hasRole('Admin') || authService.hasRole('Inventory')"
+  >
     <mat-card-title>Actions</mat-card-title>
     <div class="actions">
       <button

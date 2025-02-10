@@ -1,8 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { CreateOrEditStocksReceivingModalComponent } from 'src/app/components/create-or-edit-stocks-receiving-modal/create-or-edit-stocks-receiving-modal.component';
 import { CurrentStocksComponent } from 'src/app/components/current-stocks/current-stocks.component';
 import { InventoryLogsComponent } from 'src/app/components/inventory-logs/inventory-logs.component';
 import { MaterialModule } from 'src/app/material.module';
+import { AuthService } from 'src/app/services/auth/auth.service';
 import { InventoryService } from 'src/app/services/nswag/nswag.service';
 import Swal from 'sweetalert2';
 
@@ -14,6 +16,7 @@ import Swal from 'sweetalert2';
     CurrentStocksComponent,
     CreateOrEditStocksReceivingModalComponent,
     InventoryLogsComponent,
+    CommonModule,
   ],
   templateUrl: './inventory.component.html',
   styleUrl: './inventory.component.scss',
@@ -24,7 +27,10 @@ export class InventoryComponent {
 
   @ViewChild(CreateOrEditStocksReceivingModalComponent)
   createOrEditStocksReceivingModalComponent!: CreateOrEditStocksReceivingModalComponent;
-  constructor(private _inventoryService: InventoryService) {}
+  constructor(
+    private _inventoryService: InventoryService,
+    public authService: AuthService
+  ) {}
 
   closeInventory() {
     Swal.fire({

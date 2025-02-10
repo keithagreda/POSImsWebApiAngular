@@ -19,6 +19,7 @@ import Swal from 'sweetalert2';
 
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ViewSalesDetailsComponent } from 'src/app/components/view-sales-details/view-sales-details.component';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-cashier',
@@ -54,7 +55,8 @@ export class CashierComponent implements OnInit {
     private _cartService: CartService,
     private _customerService: CustomerService,
     private _toastr: ToastrService,
-    private _salesService: SalesService
+    private _salesService: SalesService,
+    public authService: AuthService
   ) {}
   ngOnInit(): void {
     this.getProducts();

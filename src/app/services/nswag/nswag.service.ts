@@ -547,8 +547,8 @@ export class ProductService {
         this.baseUrl = baseUrl ?? "https://localhost:7050";
     }
 
-    createProduct(input: CreateProductDto): Observable<ApiResponseOfString> {
-        let url_ = this.baseUrl + "/api/Product/CreateProduct";
+    createOrEditProduct(input: CreateProductV1Dto): Observable<ApiResponseOfString> {
+        let url_ = this.baseUrl + "/api/Product/CreateOrEditProduct";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(input);
@@ -564,11 +564,11 @@ export class ProductService {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateProduct(response_);
+            return this.processCreateOrEditProduct(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateProduct(response_ as any);
+                    return this.processCreateOrEditProduct(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<ApiResponseOfString>;
                 }
@@ -577,7 +577,58 @@ export class ProductService {
         }));
     }
 
-    protected processCreateProduct(response: HttpResponseBase): Observable<ApiResponseOfString> {
+    protected processCreateOrEditProduct(response: HttpResponseBase): Observable<ApiResponseOfString> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfString.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
+    deleteProduct(prodId: number): Observable<ApiResponseOfString> {
+        let url_ = this.baseUrl + "/api/Product/DeleteProduct/{prodId}";
+        if (prodId === undefined || prodId === null)
+            throw new Error("The parameter 'prodId' must be defined.");
+        url_ = url_.replace("{prodId}", encodeURIComponent("" + prodId));
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteProduct(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfString>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfString>;
+        }));
+    }
+
+    protected processDeleteProduct(response: HttpResponseBase): Observable<ApiResponseOfString> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -750,7 +801,7 @@ export class ProductService {
         return _observableOf(null as any);
     }
 
-    getProductForEdit(id: number): Observable<ApiResponseOfCreateProductDto> {
+    getProductForEdit(id: number): Observable<ApiResponseOfCreateProductV1Dto> {
         let url_ = this.baseUrl + "/api/Product/GetProductForEdit/{id}";
         if (id === undefined || id === null)
             throw new Error("The parameter 'id' must be defined.");
@@ -772,14 +823,14 @@ export class ProductService {
                 try {
                     return this.processGetProductForEdit(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ApiResponseOfCreateProductDto>;
+                    return _observableThrow(e) as any as Observable<ApiResponseOfCreateProductV1Dto>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ApiResponseOfCreateProductDto>;
+                return _observableThrow(response_) as any as Observable<ApiResponseOfCreateProductV1Dto>;
         }));
     }
 
-    protected processGetProductForEdit(response: HttpResponseBase): Observable<ApiResponseOfCreateProductDto> {
+    protected processGetProductForEdit(response: HttpResponseBase): Observable<ApiResponseOfCreateProductV1Dto> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -790,7 +841,7 @@ export class ProductService {
             return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ApiResponseOfCreateProductDto.fromJS(resultData200);
+            result200 = ApiResponseOfCreateProductV1Dto.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -2672,13 +2723,14 @@ export interface IProductCategoryDto {
     name: string;
 }
 
-export class CreateProductDto implements ICreateProductDto {
+export class CreateProductV1Dto implements ICreateProductV1Dto {
+    id?: number | null;
     name?: string;
     daysTillExpiration?: number;
     price?: number;
-    productCategories?: ProductCategoryDto[];
+    productCategories?: ProductCategoryDtoV1 | null;
 
-    constructor(data?: ICreateProductDto) {
+    constructor(data?: ICreateProductV1Dto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -2689,46 +2741,78 @@ export class CreateProductDto implements ICreateProductDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
             this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
             this.daysTillExpiration = _data["daysTillExpiration"] !== undefined ? _data["daysTillExpiration"] : <any>null;
             this.price = _data["price"] !== undefined ? _data["price"] : <any>null;
-            if (Array.isArray(_data["productCategories"])) {
-                this.productCategories = [] as any;
-                for (let item of _data["productCategories"])
-                    this.productCategories!.push(ProductCategoryDto.fromJS(item));
-            }
-            else {
-                this.productCategories = <any>null;
-            }
+            this.productCategories = _data["productCategories"] ? ProductCategoryDtoV1.fromJS(_data["productCategories"]) : <any>null;
         }
     }
 
-    static fromJS(data: any): CreateProductDto {
+    static fromJS(data: any): CreateProductV1Dto {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateProductDto();
+        let result = new CreateProductV1Dto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
         data["name"] = this.name !== undefined ? this.name : <any>null;
         data["daysTillExpiration"] = this.daysTillExpiration !== undefined ? this.daysTillExpiration : <any>null;
         data["price"] = this.price !== undefined ? this.price : <any>null;
-        if (Array.isArray(this.productCategories)) {
-            data["productCategories"] = [];
-            for (let item of this.productCategories)
-                data["productCategories"].push(item.toJSON());
-        }
+        data["productCategories"] = this.productCategories ? this.productCategories.toJSON() : <any>null;
         return data;
     }
 }
 
-export interface ICreateProductDto {
+export interface ICreateProductV1Dto {
+    id?: number | null;
     name?: string;
     daysTillExpiration?: number;
     price?: number;
-    productCategories?: ProductCategoryDto[];
+    productCategories?: ProductCategoryDtoV1 | null;
+}
+
+export class ProductCategoryDtoV1 implements IProductCategoryDtoV1 {
+    id?: number | null;
+    name?: string;
+
+    constructor(data?: IProductCategoryDtoV1) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
+            this.name = _data["name"] !== undefined ? _data["name"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): ProductCategoryDtoV1 {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductCategoryDtoV1();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id !== undefined ? this.id : <any>null;
+        data["name"] = this.name !== undefined ? this.name : <any>null;
+        return data;
+    }
+}
+
+export interface IProductCategoryDtoV1 {
+    id?: number | null;
+    name?: string;
 }
 
 export class ApiResponseOfIListOfProductV1Dto implements IApiResponseOfIListOfProductV1Dto {
@@ -2999,13 +3083,13 @@ export interface IProductWithCategDto {
     productCategories?: string[];
 }
 
-export class ApiResponseOfCreateProductDto implements IApiResponseOfCreateProductDto {
-    data!: CreateProductDto;
+export class ApiResponseOfCreateProductV1Dto implements IApiResponseOfCreateProductV1Dto {
+    data!: CreateProductV1Dto;
     message?: string;
     isSuccess?: boolean;
     errors?: string[];
 
-    constructor(data?: IApiResponseOfCreateProductDto) {
+    constructor(data?: IApiResponseOfCreateProductV1Dto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -3013,13 +3097,13 @@ export class ApiResponseOfCreateProductDto implements IApiResponseOfCreateProduc
             }
         }
         if (!data) {
-            this.data = new CreateProductDto();
+            this.data = new CreateProductV1Dto();
         }
     }
 
     init(_data?: any) {
         if (_data) {
-            this.data = _data["data"] ? CreateProductDto.fromJS(_data["data"]) : new CreateProductDto();
+            this.data = _data["data"] ? CreateProductV1Dto.fromJS(_data["data"]) : new CreateProductV1Dto();
             this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
             this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
             if (Array.isArray(_data["errors"])) {
@@ -3033,9 +3117,9 @@ export class ApiResponseOfCreateProductDto implements IApiResponseOfCreateProduc
         }
     }
 
-    static fromJS(data: any): ApiResponseOfCreateProductDto {
+    static fromJS(data: any): ApiResponseOfCreateProductV1Dto {
         data = typeof data === 'object' ? data : {};
-        let result = new ApiResponseOfCreateProductDto();
+        let result = new ApiResponseOfCreateProductV1Dto();
         result.init(data);
         return result;
     }
@@ -3054,8 +3138,8 @@ export class ApiResponseOfCreateProductDto implements IApiResponseOfCreateProduc
     }
 }
 
-export interface IApiResponseOfCreateProductDto {
-    data: CreateProductDto;
+export interface IApiResponseOfCreateProductV1Dto {
+    data: CreateProductV1Dto;
     message?: string;
     isSuccess?: boolean;
     errors?: string[];
@@ -5078,6 +5162,7 @@ export enum UserRoleEnum {
     Admin = 0,
     Cashier = 1,
     Inventory = 2,
+    Owner = 3,
 }
 
 export interface FileResponse {

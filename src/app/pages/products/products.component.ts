@@ -8,6 +8,8 @@ import {
   ProductService,
 } from 'src/app/services/nswag/nswag.service';
 import { CreateOrEditProductComponent } from './create-or-edit-product/create-or-edit-product.component';
+import { P } from '@angular/cdk/keycodes';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-products',
@@ -65,5 +67,36 @@ export class ProductsComponent implements OnInit {
 
   showCreateModal(id?: number) {
     this.createOrEditProductComponent.show(id);
+  }
+
+  deleteProduct(id: number) {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you really want to delete this product? This action cannot be undone.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Perform delete operation here
+        this._productService.deleteProduct(id).subscribe({
+          next: (res) => {
+            if (res.isSuccess) {
+              this._toastr.success('Product deleted successfully');
+              this.getProducts();
+            }
+            if (!res.isSuccess) {
+              this._toastr.error('Error deleting product');
+            }
+          },
+          error: (err) => {
+            console.error(err);
+          },
+        });
+      }
+    });
   }
 }

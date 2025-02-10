@@ -21,8 +21,9 @@ import { DialogModule } from 'primeng/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { DropdownModule } from 'primeng/dropdown';
 import {
-  CreateProductDto,
+  CreateProductV1Dto,
   ProductCategoryDto,
+  ProductCategoryDtoV1,
   ProductCategoryService,
   ProductService,
 } from 'src/app/services/nswag/nswag.service';
@@ -34,19 +35,19 @@ import {
     DialogModule,
     ReactiveFormsModule,
     MaterialModule,
-    DropdownModule ,
+    DropdownModule,
     CommonModule,
     FormsModule,
   ],
   templateUrl: './create-or-edit-product.component.html',
   styleUrl: './create-or-edit-product.component.scss',
 })
-export class CreateOrEditProductComponent implements OnInit{
+export class CreateOrEditProductComponent implements OnInit {
   @Output() modalSave = new EventEmitter<any>();
-  productCategories: ProductCategoryDto[] = [];
-  createOrEditProduct: CreateProductDto = new CreateProductDto();
+  productCategories: ProductCategoryDtoV1[] = [];
+  createOrEditProduct: CreateProductV1Dto = new CreateProductV1Dto();
   createProductForm!: FormGroup;
-  selectedCategory: ProductCategoryDto = new ProductCategoryDto();
+  selectedCategory: ProductCategoryDtoV1 = new ProductCategoryDtoV1();
   visible = false;
   constructor(
     private fb: FormBuilder,
@@ -55,10 +56,11 @@ export class CreateOrEditProductComponent implements OnInit{
     private _productCategoryService: ProductCategoryService
   ) {
     this.createProductForm = this.fb.group({
+      id: [''],
       name: ['', [Validators.required]],
       price: ['', [Validators.required, Validators.min(0.01)]],
       daysTillExpiration: ['', [Validators.required, Validators.min(1)]],
-      categories: ['', [Validators.required]],
+      productCategories: [[], [Validators.required]],
       // categories: this.fb.array([
       //   this.fb.group({ id: [null, Validators.required], name: [null] }),
       // ]),
@@ -74,10 +76,9 @@ export class CreateOrEditProductComponent implements OnInit{
   }
 
   show(id?: number) {
-    debugger;
     this.visible = true;
     if (!id) {
-      this.createOrEditProduct = new CreateProductDto();
+      this.createOrEditProduct = new CreateProductV1Dto();
       return;
     }
     this._productService.getProductForEdit(id).subscribe({
@@ -94,7 +95,6 @@ export class CreateOrEditProductComponent implements OnInit{
     // this.getProduct(id);
     //get product
   }
-
 
   get categories(): FormArray {
     return this.createProductForm.get('categories') as FormArray;
@@ -124,39 +124,40 @@ export class CreateOrEditProductComponent implements OnInit{
       },
       error: (err) => {
         console.error(err);
-      }
-    })
+      },
+    });
   }
 
-  getProduct(id: number) {
-    
-  }
+  getProduct(id: number) {}
 
-  populateForm(data: CreateProductDto){
+  populateForm(data: CreateProductV1Dto) {
     this.createProductForm.setValue({
-      name  : data.name,
-      price : data.price,
-      daysTillExpiration : data.daysTillExpiration,
-      categories: data.productCategories
-    })
+      id: data.id,
+      name: data.name,
+      price: data.price,
+      daysTillExpiration: data.daysTillExpiration,
+      productCategories: data.productCategories,
+    });
   }
 
   onSubmit() {
     console.log(this.createProductForm);
-    this._productService.createProduct(this.createProductForm.value).subscribe({
-      next: (res) => {
-        if (res.isSuccess) {
-          this._toastr.success(res.data);
-          this.modalSave.emit(null);
-          this.closeForm();
-        }
-        if (!res.isSuccess) {
-          this._toastr.error(res.data);
-        }
-      },
-      error: (err) => {
-        this._toastr.error('Something went wrong. While creating product');
-      },
-    });
+    this._productService
+      .createOrEditProduct(this.createProductForm.value)
+      .subscribe({
+        next: (res) => {
+          if (res.isSuccess) {
+            this._toastr.success(res.data);
+            this.modalSave.emit(null);
+            this.closeForm();
+          }
+          if (!res.isSuccess) {
+            this._toastr.error(res.message);
+          }
+        },
+        error: (err) => {
+          this._toastr.error('Something went wrong. While creating product');
+        },
+      });
   }
 }

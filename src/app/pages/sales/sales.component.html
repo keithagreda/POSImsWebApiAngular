@@ -12,7 +12,7 @@
       </button> -->
     </div>
     <div class="table-responsive">
-      <table mat-table [dataSource]="salesHeadersDto" class="w-100">
+      <table mat-table [dataSource]="dataSource" class="w-100">
         <!-- Transaction Number -->
         <ng-container matColumnDef="transNum">
           <th
@@ -126,24 +126,16 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns1"></tr>
       </table>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [length]="totalRecords"
+        (page)="getSales($event)"
+        showFirstLastButtons
+      ></mat-paginator>
     </div>
   </mat-card-content>
 </mat-card>
 
-<!-- <app-create-or-edit-product
-  (modalSave)="getProducts()"
-></app-create-or-edit-product> -->
-<!-- <p-dialog
-  header="Create Product"
-  [(visible)]="visible"
-  [modal]="true"
-  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }"
-  [style]="{ width: '50vw' }"
-  [draggable]="false"
-  [resizable]="false"
-  [appendTo]="'body'"
-  (onHide)="closeForm()"
-></p-dialog> -->
 <p-dialog
   header="View Sales Details"
   [(visible)]="visible"

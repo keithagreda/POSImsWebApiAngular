@@ -9,7 +9,7 @@
       <div class="row">
         <div
           class="col-lg-4 col-sm-6 m-b-20"
-          *ngFor="let item of viewSalesHeaderDto; let i = index"
+          *ngFor="let item of dataSource.data; let i = index"
         >
           <div [id]="'printDiv-' + i">
             <div class="sales-card">
@@ -48,18 +48,6 @@
                     <!-- <span>Discount: 0%</span> -->
                   </div>
                 </ng-container>
-                <!-- <div class="sales-item">
-                      <h3>ICE BLOCK</h3>
-                      <p> <span>Quantity</span>: 5pcs</p>
-                      <p> <span>Rate</span>: ₱100</p>
-                      <p> <span>Amount</span>: ₱500</p>
-                      <hr>
-                    </div>
-                    
-                    <div class="sales-summary">
-                      <span>TOTAL: ₱500</span>
-                      <span>Discount: 0%</span>
-                    </div> -->
               </div>
 
               <div *ngIf="!isMobile" class="sales-content not-mobile">
@@ -99,17 +87,14 @@
               </div>
             </div>
           </div>
-
-          <!-- <mat-card class="cardWithShadow">
-                <mat-card-content>
-                  <mat-card-title class="sales-detail-header">
-                    ORDER:
-                  </mat-card-title>
-                  dawdaw
-                </mat-card-content>
-              </mat-card> -->
         </div>
       </div>
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 20]"
+        [length]="totalRecords"
+        (page)="viewSales($event)"
+        showFirstLastButtons
+      ></mat-paginator>
     </div>
   </mat-card-content>
 </mat-card>

@@ -55,7 +55,6 @@ export class CreateOrEditStorageLocComponent {
 
   save() {
     this._loadingService.show();
-    debugger;
     this._storageLocationService
       .createStorageLocation(this.createStorageLoc.value)
       .subscribe({

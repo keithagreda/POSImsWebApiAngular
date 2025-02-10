@@ -17,19 +17,18 @@
   }
 }
 
-.item-stock-primary{
+.item-stock-primary {
   background-color: $primary;
-  
 }
 
-.item-stock-low{
+.item-stock-low {
   background-color: $error;
-  .btn-add-to-cart{
+  .btn-add-to-cart {
     background-color: $primary;
   }
 }
 
-.item-stock-warn{
+.item-stock-warn {
   background-color: $warning;
 }
 
@@ -89,4 +88,8 @@
 }
 
 .btn-add-to-cart {
+}
+
+.mt-2 {
+  margin-top: 1rem;
 }
