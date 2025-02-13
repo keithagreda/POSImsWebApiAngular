@@ -21,7 +21,7 @@ export const navItems: NavItem[] = [
     displayName: 'Sales',
     iconName: 'solar:hand-money-bold',
     route: '/sales',
-    roles: ['Admin', 'Cashier'],
+    roles: ['Admin', 'Cashier', 'Owner'],
   },
   {
     displayName: 'Products',

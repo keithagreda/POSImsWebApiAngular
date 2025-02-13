@@ -44,8 +44,8 @@ import {
 export class InventoryLogsComponent implements OnInit {
   displayedColumns: string[] = [
     'productName',
-    'received',
     'begQty',
+    'received',
     'sales',
     'invBegTime',
     'invEndTime',

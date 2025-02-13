@@ -25,8 +25,8 @@ import {
 export class CurrentStocksComponent implements OnInit {
   displayedColumns: string[] = [
     'productName',
-    'received',
     'begQty',
+    'received',
     'sales',
     'currentStock',
   ];

@@ -16,6 +16,8 @@ import {
 } from 'src/app/services/nswag/nswag.service';
 import { ViewSalesDetailsV1Component } from 'src/app/components/view-sales-details-v1/view-sales-details-v1.component';
 import { LoadingService } from 'src/app/services/loading.service';
+import { SalesSummaryComponent } from 'src/app/components/sales-summary/sales-summary.component';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-sales',
@@ -27,6 +29,7 @@ import { LoadingService } from 'src/app/services/loading.service';
     ViewSalesDetailsV1Component,
     MatTableModule,
     MatPaginatorModule,
+    SalesSummaryComponent,
   ],
   templateUrl: './sales.component.html',
   styleUrls: ['./sales.component.scss'],
@@ -34,6 +37,8 @@ import { LoadingService } from 'src/app/services/loading.service';
 export class SalesComponent implements OnInit {
   @ViewChild(ViewSalesDetailsV1Component)
   viewSalesDetailsComponent!: ViewSalesDetailsV1Component;
+  @ViewChild(SalesSummaryComponent)
+  salesSummaryComponent!: SalesSummaryComponent;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource = new MatTableDataSource<SalesHeaderDto>([]);
   visible = false;
@@ -50,7 +55,8 @@ export class SalesComponent implements OnInit {
   constructor(
     private _toastr: ToastrService,
     private _salesService: SalesService,
-    private _loadingService: LoadingService
+    private _loadingService: LoadingService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

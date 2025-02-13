@@ -1284,6 +1284,60 @@ export class SalesService {
         return _observableOf(null as any);
     }
 
+    getSalesSummary(filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfSalesSummaryDto> {
+        let url_ = this.baseUrl + "/api/Sales/GetSalesSummary?";
+        if (filterText !== undefined && filterText !== null)
+            url_ += "FilterText=" + encodeURIComponent("" + filterText) + "&";
+        if (pageNumber !== undefined && pageNumber !== null)
+            url_ += "PageNumber=" + encodeURIComponent("" + pageNumber) + "&";
+        if (pageSize !== undefined && pageSize !== null)
+            url_ += "PageSize=" + encodeURIComponent("" + pageSize) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSalesSummary(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSalesSummary(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ApiResponseOfPaginatedResultOfSalesSummaryDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ApiResponseOfPaginatedResultOfSalesSummaryDto>;
+        }));
+    }
+
+    protected processGetSalesSummary(response: HttpResponseBase): Observable<ApiResponseOfPaginatedResultOfSalesSummaryDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ApiResponseOfPaginatedResultOfSalesSummaryDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap((_responseText: string) => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf(null as any);
+    }
+
     viewSales(salesHeaderId: string | null | undefined, filterText: string | null | undefined, pageNumber: number | null | undefined, pageSize: number | null | undefined): Observable<ApiResponseOfPaginatedResultOfViewSalesHeaderDto> {
         let url_ = this.baseUrl + "/api/Sales/ViewSales?";
         if (salesHeaderId !== undefined && salesHeaderId !== null)
@@ -2338,7 +2392,8 @@ export interface IPaginatedResultOfGetInventoryDto {
 }
 
 export class GetInventoryDto implements IGetInventoryDto {
-    inventoryId?: string;
+    inventoryId?: string | null;
+    productId?: number;
     productName?: string;
     begQty?: number;
     receivedQty?: number;
@@ -2358,6 +2413,7 @@ export class GetInventoryDto implements IGetInventoryDto {
     init(_data?: any) {
         if (_data) {
             this.inventoryId = _data["inventoryId"] !== undefined ? _data["inventoryId"] : <any>null;
+            this.productId = _data["productId"] !== undefined ? _data["productId"] : <any>null;
             this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
             this.begQty = _data["begQty"] !== undefined ? _data["begQty"] : <any>null;
             this.receivedQty = _data["receivedQty"] !== undefined ? _data["receivedQty"] : <any>null;
@@ -2377,6 +2433,7 @@ export class GetInventoryDto implements IGetInventoryDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["inventoryId"] = this.inventoryId !== undefined ? this.inventoryId : <any>null;
+        data["productId"] = this.productId !== undefined ? this.productId : <any>null;
         data["productName"] = this.productName !== undefined ? this.productName : <any>null;
         data["begQty"] = this.begQty !== undefined ? this.begQty : <any>null;
         data["receivedQty"] = this.receivedQty !== undefined ? this.receivedQty : <any>null;
@@ -2388,7 +2445,8 @@ export class GetInventoryDto implements IGetInventoryDto {
 }
 
 export interface IGetInventoryDto {
-    inventoryId?: string;
+    inventoryId?: string | null;
+    productId?: number;
     productName?: string;
     begQty?: number;
     receivedQty?: number;
@@ -4320,6 +4378,195 @@ export interface IPerMonthSalesDto {
     year?: string;
     salesPercentage?: number;
     totalMonthlySales?: number;
+}
+
+export class ApiResponseOfPaginatedResultOfSalesSummaryDto implements IApiResponseOfPaginatedResultOfSalesSummaryDto {
+    data!: PaginatedResultOfSalesSummaryDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+
+    constructor(data?: IApiResponseOfPaginatedResultOfSalesSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.data = new PaginatedResultOfSalesSummaryDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.data = _data["data"] ? PaginatedResultOfSalesSummaryDto.fromJS(_data["data"]) : new PaginatedResultOfSalesSummaryDto();
+            this.message = _data["message"] !== undefined ? _data["message"] : <any>null;
+            this.isSuccess = _data["isSuccess"] !== undefined ? _data["isSuccess"] : <any>null;
+            if (Array.isArray(_data["errors"])) {
+                this.errors = [] as any;
+                for (let item of _data["errors"])
+                    this.errors!.push(item);
+            }
+            else {
+                this.errors = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): ApiResponseOfPaginatedResultOfSalesSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApiResponseOfPaginatedResultOfSalesSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>null;
+        data["message"] = this.message !== undefined ? this.message : <any>null;
+        data["isSuccess"] = this.isSuccess !== undefined ? this.isSuccess : <any>null;
+        if (Array.isArray(this.errors)) {
+            data["errors"] = [];
+            for (let item of this.errors)
+                data["errors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface IApiResponseOfPaginatedResultOfSalesSummaryDto {
+    data: PaginatedResultOfSalesSummaryDto;
+    message?: string;
+    isSuccess?: boolean;
+    errors?: string[];
+}
+
+export class PaginatedResultOfSalesSummaryDto implements IPaginatedResultOfSalesSummaryDto {
+    items?: SalesSummaryDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+
+    constructor(data?: IPaginatedResultOfSalesSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["items"])) {
+                this.items = [] as any;
+                for (let item of _data["items"])
+                    this.items!.push(SalesSummaryDto.fromJS(item));
+            }
+            else {
+                this.items = <any>null;
+            }
+            this.totalCount = _data["totalCount"] !== undefined ? _data["totalCount"] : <any>null;
+            this.totalPages = _data["totalPages"] !== undefined ? _data["totalPages"] : <any>null;
+            this.currentPage = _data["currentPage"] !== undefined ? _data["currentPage"] : <any>null;
+            this.pageSize = _data["pageSize"] !== undefined ? _data["pageSize"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): PaginatedResultOfSalesSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PaginatedResultOfSalesSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.items)) {
+            data["items"] = [];
+            for (let item of this.items)
+                data["items"].push(item.toJSON());
+        }
+        data["totalCount"] = this.totalCount !== undefined ? this.totalCount : <any>null;
+        data["totalPages"] = this.totalPages !== undefined ? this.totalPages : <any>null;
+        data["currentPage"] = this.currentPage !== undefined ? this.currentPage : <any>null;
+        data["pageSize"] = this.pageSize !== undefined ? this.pageSize : <any>null;
+        return data;
+    }
+}
+
+export interface IPaginatedResultOfSalesSummaryDto {
+    items?: SalesSummaryDto[];
+    totalCount?: number;
+    totalPages?: number;
+    currentPage?: number;
+    pageSize?: number;
+}
+
+export class SalesSummaryDto implements ISalesSummaryDto {
+    customerName?: string;
+    soldBy?: string;
+    transNum?: string;
+    dateTime?: Date;
+    productName?: string;
+    quantity?: number;
+    rate?: number;
+    totalPrice?: number;
+
+    constructor(data?: ISalesSummaryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.customerName = _data["customerName"] !== undefined ? _data["customerName"] : <any>null;
+            this.soldBy = _data["soldBy"] !== undefined ? _data["soldBy"] : <any>null;
+            this.transNum = _data["transNum"] !== undefined ? _data["transNum"] : <any>null;
+            this.dateTime = _data["dateTime"] ? new Date(_data["dateTime"].toString()) : <any>null;
+            this.productName = _data["productName"] !== undefined ? _data["productName"] : <any>null;
+            this.quantity = _data["quantity"] !== undefined ? _data["quantity"] : <any>null;
+            this.rate = _data["rate"] !== undefined ? _data["rate"] : <any>null;
+            this.totalPrice = _data["totalPrice"] !== undefined ? _data["totalPrice"] : <any>null;
+        }
+    }
+
+    static fromJS(data: any): SalesSummaryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesSummaryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["customerName"] = this.customerName !== undefined ? this.customerName : <any>null;
+        data["soldBy"] = this.soldBy !== undefined ? this.soldBy : <any>null;
+        data["transNum"] = this.transNum !== undefined ? this.transNum : <any>null;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>null;
+        data["productName"] = this.productName !== undefined ? this.productName : <any>null;
+        data["quantity"] = this.quantity !== undefined ? this.quantity : <any>null;
+        data["rate"] = this.rate !== undefined ? this.rate : <any>null;
+        data["totalPrice"] = this.totalPrice !== undefined ? this.totalPrice : <any>null;
+        return data;
+    }
+}
+
+export interface ISalesSummaryDto {
+    customerName?: string;
+    soldBy?: string;
+    transNum?: string;
+    dateTime?: Date;
+    productName?: string;
+    quantity?: number;
+    rate?: number;
+    totalPrice?: number;
 }
 
 export class ApiResponseOfPaginatedResultOfViewSalesHeaderDto implements IApiResponseOfPaginatedResultOfViewSalesHeaderDto {
